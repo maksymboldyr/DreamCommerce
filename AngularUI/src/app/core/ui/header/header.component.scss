@@ -1,0 +1,8 @@
+:host ::ng-deep .card {
+    position: sticky;
+    position: -webkit-sticky;
+    height: 0px;
+    overflow: visible;
+    z-index: 10000;
+    top: 0;
+}

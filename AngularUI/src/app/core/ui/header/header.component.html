@@ -1,0 +1,37 @@
+<div class="card">
+    <p-menubar [model]="items">
+        <ng-template pTemplate="start">
+            <p-button (onClick)="toggle()" icon="pi pi-th-large" label="Catalogue" [rounded]="true" [outlined]="true"></p-button>
+            <p-overlay [(visible)]="overlayVisible">
+                <p-tieredMenu [model]="catalogueItems" orientation="vertical"/>   
+            </p-overlay>
+        </ng-template>
+        <ng-template pTemplate="item" let-item let-root="root">
+            <a [routerLink]="item.route" pRipple class="flex align-items-center p-menuitem-link">
+                <span [class]="item.icon"></span>
+                <span class="ml-2">{{ item.label }}</span>
+                <p-badge *ngIf="item.badge" [ngClass]="{ 'ml-auto': !root, 'ml-2': root }" [value]="item.badge" />
+                <span *ngIf="item.shortcut" class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1">{{ item.shortcut }}</span>
+                <i *ngIf="item.items" [ngClass]="['pi', root ? 'pi-angle-down ml-2' : 'pi-angle-right ml-auto']"></i>
+            </a>
+        </ng-template>
+        <ng-template pTemplate="end">
+            <div class="flex align-items-center gap-2">
+                <input type="text" pInputText placeholder="Search" class="w-8rem sm:w-auto" />
+                <p-menu #menu [model]="avatarItems" [popup]="true">
+                    <ng-template pTemplate="end">
+                        <a routerLink="/login" pRipple class="flex align-items-center p-menuitem-link" *ngIf="!isAuthenticated">
+                            <span class="pi pi-sign-in"></span>
+                            <span class="ml-2">Sign In</span>
+                        </a>
+                        <a routerLink="/home" (click)="logout()" pRipple class="flex align-items-center p-menuitem-link" *ngIf="isAuthenticated">
+                            <span class="pi pi-sign-out"></span>
+                            <span class="ml-2">Sign Out</span>
+                        </a>
+                    </ng-template>
+                </p-menu>
+                <p-button (onClick)="menu.toggle($event)" icon="pi pi-user" [rounded]="true" severity="info" [outlined]="true"/>                
+            </div>
+        </ng-template>
+    </p-menubar>
+</div>
