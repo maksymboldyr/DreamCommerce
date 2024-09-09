@@ -1,4 +1,4 @@
-﻿using DataAccess.Entities;
+﻿using DataAccess.Entities.Users;
 using DataAccess.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
@@ -41,6 +41,11 @@ namespace DataAccess.Repository
             var user = await _userManager.FindByIdAsync(id);
 
             return user;
+        }
+
+        public Task<Role> GetUserRoleById(string id)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task<bool> UpdateUserAsync(User user)

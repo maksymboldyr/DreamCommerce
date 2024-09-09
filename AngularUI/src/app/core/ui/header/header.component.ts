@@ -13,7 +13,7 @@ import { MegaMenuModule } from 'primeng/megamenu';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { StyleClassModule } from 'primeng/styleclass';
 import { OverlayModule } from 'primeng/overlay';
-import { AuthService } from '../../auth/auth.service';
+import { AuthService } from '../../auth/services/auth.service';
 import { map } from 'rxjs';
 
 @Component({
@@ -47,7 +47,7 @@ export class HeaderComponent implements OnInit {
   auth = inject(AuthService);
 
   get isAuthenticated() {
-    return this.auth.accessToken !== null;
+    return this.auth.accessToken !== null && this.auth.accessToken !== '';
   }
 
   ngOnInit() {

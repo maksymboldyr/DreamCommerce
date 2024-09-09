@@ -266,6 +266,12 @@ ServiceFabricBackup/
 *.ldf
 *.ndf
 
+#SQLite database files
+*.db
+*.db-shm
+*.db-wal
+
+
 # Business Intelligence projects
 *.rdl.data
 *.bim.layout
@@ -363,3 +369,6 @@ MigrationBackup/
 FodyWeavers.xsd
 /AngularUI/
 /AngularUI/AngularUI.esproj
+/API/marketplace.db
+/API/marketplace.db-shm
+/API/marketplace.db-wal

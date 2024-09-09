@@ -1,12 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormControl, Validators, FormGroup, ReactiveFormsModule, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
-import { PasswordValidationService } from '../password-validation.service';
+import { PasswordValidationService } from '../services/password-validation.service';
 import { CommonModule } from '@angular/common';
 import { DividerModule } from 'primeng/divider';
 import { PasswordModule } from 'primeng/password';
 import { InputTextModule } from 'primeng/inputtext';
 import { Button, ButtonModule } from 'primeng/button';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../services/auth.service';
 import { Router } from '@angular/router';
 
 export interface RegisterDto {
@@ -100,11 +100,5 @@ export class RegisterComponent {
         this.focusedConfirmPassword = !this.focusedConfirmPassword;
         break;
     }
-  }
-
-  confirmPasswordValidator(password : FormControl | any, confirmPassword: FormControl | any): ValidatorFn {
-    return (control: AbstractControl): ValidationErrors | null => {
-      return password.value === confirmPassword.value ? null : { noMatch: true };
-    };
   }
 }

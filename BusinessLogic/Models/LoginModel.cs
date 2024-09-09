@@ -1,4 +1,4 @@
-﻿namespace API.Models
+﻿namespace BusinessLogic.Models
 {
     public class LoginModel
     {
