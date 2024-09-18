@@ -3,6 +3,7 @@ using System;
 using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20240918010657_InitCreate")]
+    partial class InitCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.7");
@@ -104,6 +107,7 @@ namespace DataAccess.Migrations
                         .HasColumnType("REAL");
 
                     b.Property<string>("ImageUrl")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -206,9 +210,6 @@ namespace DataAccess.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Address")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("TEXT");
@@ -219,12 +220,6 @@ namespace DataAccess.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("INTEGER");
-
-                    b.Property<string>("FirstName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("LastName")
-                        .HasColumnType("TEXT");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("INTEGER");
@@ -275,15 +270,15 @@ namespace DataAccess.Migrations
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1a",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "4944151a-f411-47ee-a9e6-ef60379dc860",
+                            ConcurrencyStamp = "e89cb386-9bf0-4259-831e-76591f2c0fc3",
                             Email = "admin@mail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@MAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEAWZUFV53O2goFutstAf1ZLVWXHAv4H6Sf7qMo394xM1l+FudWgfzgGNKWeILmCnwg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEG2YzTifsc+dQUBZKOQ17MGUSUKgbKaGXqrLwvSFWUI0wpRyLaBmIh00k8byfTe5wA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "9ca3d337-033f-4fb2-b1f9-c9320f6b2d83",
+                            SecurityStamp = "443b1306-6b42-48b1-a097-fcc82ded6fe8",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         },
@@ -291,15 +286,15 @@ namespace DataAccess.Migrations
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1b",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "362295c4-8739-401f-922e-e0a862ad385f",
+                            ConcurrencyStamp = "d738fe05-a240-4fbe-9674-09f2d6dd585e",
                             Email = "shop@mail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "SHOP@MAIL.COM",
                             NormalizedUserName = "SHOP",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKTly583ivg44AAzpFlzLrGK6odzTS+LEh04BW+f8Du1PaEl2wgJIfuK8Dn+SoqEsA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECRxJ4QD2qAxu8N31mejRteF0JJ3Mp20LdmKwUCP00Yee0ECjzCaCaKPAMIqz15/pg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "16126a9a-6734-40d0-963c-18b08f53d09a",
+                            SecurityStamp = "7d60e933-0df8-4598-9dd1-ec195ae37a4c",
                             TwoFactorEnabled = false,
                             UserName = "shop"
                         },
@@ -307,15 +302,15 @@ namespace DataAccess.Migrations
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1c",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "aff05769-8996-4396-ad69-3582d68eda1e",
+                            ConcurrencyStamp = "49a935d1-7fc5-4632-8052-8e45cb7e1649",
                             Email = "user@mail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "USER@MAIL.COM",
                             NormalizedUserName = "USER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEPUDIlqIlgW8PQdlp49YCde9EXiGbVJyT5miQBcs53/2UPUyb4Ii5kW+iq+BkcEm3g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELb5KiK1CyJ/dPNzVaLIS+cU6wjIQWgHIw/EC67s2/BzaNZTL+JSTvi8ZyOLm7fxhA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "87cc1dd8-ad34-4e4c-8b8c-6dfe5865475c",
+                            SecurityStamp = "22f1948e-f0bc-4288-a72b-5709956aa376",
                             TwoFactorEnabled = false,
                             UserName = "user"
                         });

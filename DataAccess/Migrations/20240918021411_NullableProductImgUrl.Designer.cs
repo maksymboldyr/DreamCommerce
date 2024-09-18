@@ -11,14 +11,146 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    [Migration("20240905161125_InitCreate")]
-    partial class InitCreate
+    [Migration("20240918021411_NullableProductImgUrl")]
+    partial class NullableProductImgUrl
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.7");
+
+            modelBuilder.Entity("DataAccess.Entities.Category", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Order", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.OrderDetail", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("OrderId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ProductId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderDetails");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Product", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CategoryId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<float>("Discount")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Stock")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SubcategoryId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("SubcategoryId");
+
+                    b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Subcategory", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CategoryId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("Subcategories");
+                });
 
             modelBuilder.Entity("DataAccess.Entities.Users.Role", b =>
                 {
@@ -137,15 +269,15 @@ namespace DataAccess.Migrations
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1a",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "7e4b44eb-097d-451f-bc7f-0b9b867aeb2c",
+                            ConcurrencyStamp = "f9958fd7-8eb3-45c8-bb4f-d451c9684632",
                             Email = "admin@mail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@MAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMXMvXOMEOPWjhDvASqpsYjxW6WFtMTorY1dz1cKX3FImAssfp0My1oU/XY1Uy7g1g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEPIHMKbsgDR0k6YneuiUgnNlOvsPxmFtdEFjSqD2NaCzEPhdJ6qhezncarntxreyZQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "00981300-f8b3-4d01-bb05-c8b2b4e6cf97",
+                            SecurityStamp = "f9415532-6109-458c-966d-ac8f425976ed",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         },
@@ -153,15 +285,15 @@ namespace DataAccess.Migrations
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1b",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "e459beea-1fe0-42d0-9937-652c7a418011",
+                            ConcurrencyStamp = "a282e4ef-6d73-4174-91bd-c1d6e4ce43e2",
                             Email = "shop@mail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "SHOP@MAIL.COM",
                             NormalizedUserName = "SHOP",
-                            PasswordHash = "AQAAAAIAAYagAAAAEA+7rv7sb/O2oVqGrda36rmhLeXyIXfDgj3SnwF783i12I85xcieYzGKSub99AY50w==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEIL1EAwRlpNRkRVMMtLvcxYHaQFE/buZmfBCSpfcBhFHklMAHuk7QVbs+7iQ00vXAg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "8f521c4e-4977-4490-838c-9f4a7f622c3f",
+                            SecurityStamp = "04fc6987-0b69-4bc7-96dc-85d3d302d471",
                             TwoFactorEnabled = false,
                             UserName = "shop"
                         },
@@ -169,15 +301,15 @@ namespace DataAccess.Migrations
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1c",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "b54d31e2-1dfe-4874-850c-6812890c28fe",
+                            ConcurrencyStamp = "fe951288-696f-467a-b141-db37b52aa486",
                             Email = "user@mail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "USER@MAIL.COM",
                             NormalizedUserName = "USER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKxiycF5I72V2+LSyMpihnB4f460YNESbreh4ucImmH6rd9kiXcC5CxSUlimnwsWrQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAELRz9ZjyN4Jjhzg7Gjtq2a+AjAhwa4zi0MMbBSIULAOvEPjVj0o7z2iqB1vRDAtNzg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ec48be93-bea6-457d-8ccc-04cc526b7996",
+                            SecurityStamp = "ba456f35-e061-4d04-95c5-2bab6140b934",
                             TwoFactorEnabled = false,
                             UserName = "user"
                         });
@@ -302,6 +434,62 @@ namespace DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("DataAccess.Entities.Order", b =>
+                {
+                    b.HasOne("DataAccess.Entities.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.OrderDetail", b =>
+                {
+                    b.HasOne("DataAccess.Entities.Order", "Order")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Product", b =>
+                {
+                    b.HasOne("DataAccess.Entities.Category", "Category")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId");
+
+                    b.HasOne("DataAccess.Entities.Subcategory", "Subcategory")
+                        .WithMany("Products")
+                        .HasForeignKey("SubcategoryId");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("Subcategory");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Subcategory", b =>
+                {
+                    b.HasOne("DataAccess.Entities.Category", "Category")
+                        .WithMany("Subcategories")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("DataAccess.Entities.Users.Role", null)
@@ -351,6 +539,23 @@ namespace DataAccess.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Category", b =>
+                {
+                    b.Navigation("Products");
+
+                    b.Navigation("Subcategories");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Order", b =>
+                {
+                    b.Navigation("OrderDetails");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Subcategory", b =>
+                {
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

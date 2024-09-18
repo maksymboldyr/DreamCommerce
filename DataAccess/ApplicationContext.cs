@@ -1,4 +1,5 @@
-﻿using DataAccess.Entities.Users;
+﻿using DataAccess.Entities;
+using DataAccess.Entities.Users;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -12,8 +13,11 @@ public class ApplicationContext : IdentityDbContext<User, Role, string>
         
     }
 
-    DbSet<User> Users { get; set; }
-    DbSet<Role> Roles { get; set; }
+    DbSet<Category> Categories { get; set; }
+    DbSet<Subcategory> Subcategories { get; set; }
+    DbSet<Product> Products { get; set; }
+    DbSet<Order> Orders { get; set; }
+    DbSet<OrderDetail> OrderDetails { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

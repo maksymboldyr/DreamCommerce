@@ -1,6 +1,5 @@
 ﻿using BusinessLogic.Interfaces;
 using DataAccess.Interfaces;
-using BusinessLogic.Models;
 using Microsoft.AspNetCore.Identity;
 using DataAccess.Entities.Users;
 using System.Security.Claims;
@@ -8,6 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.Extensions.Configuration;
+using BusinessLogic.DTO;
 
 namespace BusinessLogic.Services
 {
@@ -24,14 +24,13 @@ namespace BusinessLogic.Services
             _configuration = configuration;
         }
 
-        public async Task<bool> CheckUserPasswordAsync(LoginModel userModel)
+        public async Task<bool> CheckUserPasswordAsync(LoginDTO userModel)
         {
             var user = await _userRepository.GetUserByEmailAsync(userModel.Email);
             return await _userManager.CheckPasswordAsync(user, userModel.Password);
         }
 
-
-        public async Task<bool> CreateUserAsync(RegistrationModel userModel)
+        public async Task<bool> CreateUserAsync(RegistrationDTO userModel)
         {
             var userExists = await _userRepository.GetUserByEmailAsync(userModel.Email);
             if (userExists != null)
@@ -85,24 +84,87 @@ namespace BusinessLogic.Services
             return tokenHandler.WriteToken(token);
         }
 
-        public async Task<LoginModel> GetUserByEmailAsync(string email)
+        public async Task<LoginDTO> GetUserByEmailAsync(string email)
         {
             var  user = await _userRepository.GetUserByEmailAsync(email);
-            var userModel = new LoginModel { Email = user.Email };
+            var userModel = new LoginDTO { Email = user.Email };
             return userModel;
         }
 
-        public async Task<LoginModel> GetUserByIdAsync(string id)
+        public async Task<LoginDTO> GetUserByIdAsync(string id)
         {
             var user = await _userRepository.GetUserByIdAsync(id);
-            var userModel = new LoginModel { Email = user.Email };
+            var userModel = new LoginDTO { Email = user.Email };
             return userModel;
         }
 
-        public Task<bool> UpdateUserAsync(LoginModel userModel)
+        public Task<bool> UpdateUserAsync(LoginDTO userModel)
         {
             var user = new User { UserName = userModel.Email, Email = userModel.Email };
             return _userRepository.UpdateUserAsync(user);
+        }
+
+        public async Task<IEnumerable<RoleDTO>> GetRolesAsync()
+        {
+            var roles = await _userRepository.GetRolesAsync();
+
+            return roles.Select(r => new RoleDTO
+            {
+                Id = r.Id,
+                Name = r.Name,
+                Description = r.Description
+            });
+        }
+
+        public async Task<IEnumerable<string>> GetRolesNamesAsync()
+        {
+            var roles = await _userRepository.GetRolesAsync();
+
+            return roles.Select(r => r.Name);
+        }
+
+        public async Task<IEnumerable<string>> GetUserRolesByIdAsync(string userId)
+        {
+            return await _userRepository.GetUserRolesByIdAsync(userId);
+        }
+
+        public async Task<IEnumerable<UserDTO>> GetUsersAsync()
+        {
+            var users = await _userRepository.GetUsersAsync();
+
+
+
+            var userModels = users.Select(u => new UserDTO
+            {
+                Id = u.Id,
+                Email = u.Email,
+                PhoneNumber = u.PhoneNumber,
+                Address = u.Address,
+                FirstName = u.FirstName,
+                LastName = u.LastName,
+            }).ToList();
+
+            foreach (var userModel in userModels)
+            {
+                if (userModel.Id != null)
+                {
+                    var roles = await _userRepository.GetUserRolesByIdAsync(userModel.Id);
+
+                    userModel.Roles = roles;
+                }
+            }
+
+            return userModels;
+        }
+
+        public Task<bool> SetUserRole(EditUserRolesDTO editUserRolesDTO)
+        {
+            return _userRepository.SetRole(editUserRolesDTO.UserId, editUserRolesDTO.RoleName);
+        }
+
+        public Task<bool> RemoveRole(EditUserRolesDTO editUserRolesDTO)
+        {
+            return _userRepository.RemoveRole(editUserRolesDTO.UserId, editUserRolesDTO.RoleName);
         }
     }
 }
