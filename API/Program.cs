@@ -48,25 +48,25 @@ builder.Services.AddAuthentication(options =>
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-}) 
-            .AddJwtBearer(options =>
-            {
-                options.SaveToken = true;
-                options.RequireHttpsMetadata = false;
-                options.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidAudience = builder.Configuration["JWT:ValidAudience"],
-                    ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
-                    ClockSkew = TimeSpan.Zero,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
-                };
-            });
+})
+    .AddJwtBearer(options =>
+    {
+        options.SaveToken = true;
+        options.RequireHttpsMetadata = false;
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidAudience = builder.Configuration["JWT:ValidAudience"],
+            ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
+            ClockSkew = TimeSpan.Zero,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
+        };
+    });
 
 
-builder.Services.AddControllers().AddJsonOptions(x =>
-   x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
+
+builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -75,6 +75,8 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.UseCors("AllowAll");
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
@@ -82,11 +84,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseCors("AllowAll");
-
 app.UseHttpsRedirection();
 
 app.MapPost("/validate-access-token", () => Results.Ok()).RequireAuthorization();
+
+app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();

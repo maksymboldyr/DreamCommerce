@@ -1,11 +1,15 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using BusinessLogic.Interfaces;
 using BusinessLogic.DTO;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using API.Models;
 
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -19,6 +23,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("login")]
+        [AllowAnonymous]
         public async Task<IActionResult> Login(LoginDTO model)
         {
             try
@@ -43,6 +48,7 @@ namespace API.Controllers
 
         [HttpPost]
         [Route("register")]
+        [AllowAnonymous]
         public async Task<IActionResult> Register(RegistrationDTO model)
         {
             try
@@ -65,13 +71,37 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("get-users")]
-        public async Task<IActionResult> GetUsers()
+        [Route("{id}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUser(string id)
         {
             try
             {
-                var users = await _userService.GetUsersAsync();
-                return Ok(users);
+                var user = await _userService.GetUserByIdAsync(id);
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("get-users")]
+        [Authorize(Roles = "Admin")]
+        public async Task<ActionResult<TableViewModel<UserDTO>>> GetUsers([FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "id", [FromQuery] string sortOrder = "asc")
+        {
+            try
+            {
+                var usersWithCount = await _userService.GetUsersAsync(page, pageSize, sortField, sortOrder);
+
+                var tableViewModel = new TableViewModel<UserDTO>
+                {
+                    Data = usersWithCount.Item1,
+                    TotalCount = usersWithCount.Item2
+                };
+                return Ok(tableViewModel);
             }
             catch (Exception ex)
             {
@@ -82,6 +112,7 @@ namespace API.Controllers
 
         [HttpGet]
         [Route("get-roles")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetRoles()
         {
             try
@@ -98,6 +129,7 @@ namespace API.Controllers
 
         [HttpGet]
         [Route("get-role-names")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> GetRoleNames()
         {
             try
@@ -113,7 +145,29 @@ namespace API.Controllers
         }
 
         [HttpPut]
+        [Route("update-user")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> UpdateUser(UserDTO user)
+        {
+            try
+            {
+                var success = await _userService.UpdateUserAsync(user);
+                if (success)
+                {
+                    return Ok("User updated successfully");
+                }
+                return BadRequest("User not updated");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpPut]
         [Route("set-user-role")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> SetUserRole([FromBody] EditUserRolesDTO setRoleDTO)
         {
             try
@@ -134,6 +188,7 @@ namespace API.Controllers
         
         [HttpPut]
         [Route("remove-user-role")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> RemoveUserRole([FromBody] EditUserRolesDTO removeRoleDTO)
         {
             try

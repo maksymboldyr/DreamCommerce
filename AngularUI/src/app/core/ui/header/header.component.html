@@ -19,7 +19,11 @@
             <div class="flex align-items-center gap-2">
                 <input type="text" pInputText placeholder="Search" class="w-8rem sm:w-auto" />
                 <p-menu #menu [model]="avatarItems" [popup]="true">
-                    <ng-template pTemplate="end">
+                    <ng-template pTemplate="start">
+                        <a routerLink="/admin" pRipple class="flex align-items-center p-menuitem-link" *ngIf='auth.hasRole("Admin")'>
+                            <span class="pi pi-cog"></span>
+                            <span class="ml-2">Admin Panel</span>
+                        </a>
                         <a routerLink="/login" pRipple class="flex align-items-center p-menuitem-link" *ngIf="!isAuthenticated">
                             <span class="pi pi-sign-in"></span>
                             <span class="ml-2">Sign In</span>

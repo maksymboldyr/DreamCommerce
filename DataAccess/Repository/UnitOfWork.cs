@@ -1,4 +1,5 @@
 ﻿using DataAccess.Entities;
+using DataAccess.Entities.Users;
 
 namespace DataAccess.Repository
 {

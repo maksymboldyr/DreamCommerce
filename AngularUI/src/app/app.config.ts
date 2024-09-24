@@ -1,10 +1,10 @@
 import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
 import { provideRouter } from '@angular/router';
-
 import { routes } from './app.routes';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { JwtModule } from '@auth0/angular-jwt';
+import { AccessTokenInterceptor } from './core/auth/interceptors/access-token.interceptor';
 
 export function tokenGetter() {
   return localStorage.getItem("access_token");
@@ -17,20 +17,18 @@ export function tokenSetter(token: string) {
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
+    provideHttpClient(
+      withInterceptorsFromDi()
+    ),
     provideRouter(routes),
     provideAnimations(),
-    provideHttpClient(),
     importProvidersFrom(
       JwtModule.forRoot({
         config: {
           tokenGetter: tokenGetter,
-          allowedDomains: ["example.com"],
-          disallowedRoutes: ["http://example.com/examplebadroute/"],
         },
       }),
     ),
-    provideHttpClient(
-      withInterceptorsFromDi(),
-    ),
+    { provide: HTTP_INTERCEPTORS, useClass: AccessTokenInterceptor, multi: true }
   ]
 };

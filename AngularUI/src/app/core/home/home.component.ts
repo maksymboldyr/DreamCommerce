@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { AuthService } from '../auth/services/auth.service';
+import { AppComponent } from '../../app.component';
 
 @Component({
   selector: 'app-home',
@@ -11,8 +12,12 @@ import { AuthService } from '../auth/services/auth.service';
 export class HomeComponent {
   auth = inject(AuthService);
 
-  get user() {    
+  get user() {      
     return this.auth.currentUser;
+  }
+
+  get userDTO() {
+    return this.auth.decodedUserToken;
   }
 
 }

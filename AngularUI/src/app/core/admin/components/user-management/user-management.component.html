@@ -1,0 +1,53 @@
+<div class="table-container">
+  <p-table styleClass="mx-auto w-full custom-table p-datatable-striped p-datatable-gridlines"
+    [value]="users"
+    [loading]="loading"
+    [lazy]="true"
+    [paginator]="true"
+    [rows]="5"
+    [totalRecords]="totalRecords"
+    [rowsPerPageOptions]="[5, 10, 20]"    
+    [paginatorPosition]="'both'"
+    [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [sortOrder]="1"
+    [globalFilterFields]="['email', 'roles']"
+    (onLazyLoad)="loadData($event)">
+    
+    
+    <ng-template pTemplate="header">
+      <tr>
+        <th>ID</th>
+        <th pSortableColumn="email">Email<p-sortIcon field="email"></p-sortIcon></th>
+        <th pSortableColumn="roles">Role<p-sortIcon field="roles"></p-sortIcon></th>
+        <th>Actions</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-user>
+      <tr>
+        <td>{{user.id}}</td>
+        <td>{{user.email}}</td>
+        <td>
+          <p *ngFor="let role of user.roles">{{role}} </p>
+        </td>
+        <td>
+          <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-success" (click)="editUser(user)"></button>
+          <button pButton type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="deleteUser(user)"></button>
+        </td>
+        </tr>
+        <p-dialog header="Edit User" [modal]="true" [(visible)]="editModalVisible" [style]="{ width: '25rem' }">
+        <div>
+          <div *ngFor="let enumRole of globalRolesArray" class="field-checkbox">
+                      <p-checkbox name="{{enumRole}}" binary="true" label="{{enumRole}}" [(ngModel)]="selectedRoles[enumRole]" ></p-checkbox>
+                      {{enumRole}}
+                      {{selectedRoles[enumRole]}}
+                      {{selectedRoles["User"]}}
+                  </div>
+              </div>
+              <div class="flex justify-content-end gap-2 mt-2">
+                <p-button label="Cancel" severity="secondary" (click)="closeModal()"></p-button>
+                <p-button label="Save" (click)="onEditUser()"></p-button>
+              </div>
+            </p-dialog>
+      </ng-template>
+  </p-table>
+</div>

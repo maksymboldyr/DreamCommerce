@@ -2,6 +2,8 @@
 using DataAccess.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace DataAccess.Repository
 {
@@ -26,8 +28,16 @@ namespace DataAccess.Repository
         public async Task<bool> DeleteUserAsync(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null) {
+                throw new ArgumentException("User not found");
+            }
             
             var result = await _userManager.DeleteAsync(user);
+
+            if (!result.Succeeded) {
+                throw new ArgumentException("User not deleted");
+            }
 
             return result.Succeeded;
         }
@@ -41,12 +51,20 @@ namespace DataAccess.Repository
         {
             var user = await _userManager.FindByEmailAsync(email);
 
+            if (user == null) {
+                throw new ArgumentException("User not found");
+            }
+
             return user;
         }
 
         public async Task<User> GetUserByIdAsync(string id)
         {
             var user = await _userManager.FindByIdAsync(id);
+
+            if (user == null) {
+                throw new ArgumentException("User not found");
+            }
 
             return user;
         }
@@ -62,9 +80,32 @@ namespace DataAccess.Repository
             return await _userManager.GetRolesAsync(user);
         }
 
-        public async Task<IEnumerable<User>> GetUsersAsync()
+        public async Task<IEnumerable<User>> GetUsersAsync(
+            Expression<Func<User, bool>> filter = null,
+            Func<IQueryable<User>, IOrderedQueryable<User>> orderBy = null,
+            string includeProperties = "")
         {
-            return await _userManager.Users.ToListAsync();
+            var query = _userManager.Users;
+
+            if (filter != null)
+            {
+                query = query.Where(filter);
+            }
+
+            foreach (var includeProperty in includeProperties.Split
+                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProperty);
+            }
+
+            if (orderBy != null)
+            {
+                return await orderBy(query).ToListAsync();
+            }
+            else
+            {
+                return await query.ToListAsync();
+            }
         }
 
         public async Task<bool> RemoveRole(string userId, string roleName)
@@ -114,7 +155,16 @@ namespace DataAccess.Repository
 
         public async Task<bool> UpdateUserAsync(User user)
         {
-            var userToUpdate = await _userManager.FindByEmailAsync(user.Email);
+            if (user == null) {
+                throw new ArgumentException("User not found");
+            }
+
+            var userToUpdate = await _userManager.FindByIdAsync(user.Id);
+
+            if (userToUpdate == null) {
+                throw new ArgumentException("User not found");
+            }
+
             var result = await _userManager.UpdateAsync(userToUpdate);
             return result.Succeeded;
         }

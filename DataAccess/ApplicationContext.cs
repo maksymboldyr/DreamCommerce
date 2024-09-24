@@ -23,12 +23,10 @@ public class ApplicationContext : IdentityDbContext<User, Role, string>
     {
         var adminRoleId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1b";
         var shopRoleId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1c";
-        var userRoleId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1d";
 
         builder.Entity<Role>().HasData(
             new Role { Id = adminRoleId, Name = "Admin", NormalizedName = "ADMIN" },
-            new Role { Id = shopRoleId, Name = "Shop", NormalizedName = "SHOP" },
-            new Role { Id = userRoleId, Name = "User", NormalizedName = "USER" }
+            new Role { Id = shopRoleId, Name = "Shop", NormalizedName = "SHOP" }
         );
 
         var adminUser = new User
@@ -75,8 +73,7 @@ public class ApplicationContext : IdentityDbContext<User, Role, string>
 
         builder.Entity<IdentityUserRole<string>>().HasData(
             new IdentityUserRole<string> { RoleId = adminRoleId, UserId = adminUser.Id },
-            new IdentityUserRole<string> { RoleId = shopRoleId, UserId = shopUser.Id },
-            new IdentityUserRole<string> { RoleId = userRoleId, UserId = userUser.Id }
+            new IdentityUserRole<string> { RoleId = shopRoleId, UserId = shopUser.Id }
         );
 
 

@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using BusinessLogic.DTO;
+using System.Linq.Expressions;
 
 namespace BusinessLogic.Services
 {
@@ -40,6 +41,7 @@ namespace BusinessLogic.Services
 
             var user = new User { UserName = userModel.Email, Email = userModel.Email};
             user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, userModel.Password);
+            
             return await _userRepository.CreateUserAsync(user);
         }
 
@@ -55,6 +57,7 @@ namespace BusinessLogic.Services
             var authClaims = new List<Claim>
             {
                new Claim(ClaimTypes.Name, user.UserName),
+               new Claim("id", user.Id),
                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             };
 
@@ -84,24 +87,76 @@ namespace BusinessLogic.Services
             return tokenHandler.WriteToken(token);
         }
 
-        public async Task<LoginDTO> GetUserByEmailAsync(string email)
+        public async Task<UserDTO> GetUserByEmailAsync(string email)
         {
             var  user = await _userRepository.GetUserByEmailAsync(email);
-            var userModel = new LoginDTO { Email = user.Email };
+            var userModel = new UserDTO
+            {
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Address = user.Address,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+            };
             return userModel;
         }
 
-        public async Task<LoginDTO> GetUserByIdAsync(string id)
+        public async Task<UserDTO> GetUserByIdAsync(string id)
         {
             var user = await _userRepository.GetUserByIdAsync(id);
-            var userModel = new LoginDTO { Email = user.Email };
+            
+            if (user == null)
+            {
+                throw new ArgumentException("User not found");
+            }
+
+            var userModel = new UserDTO
+            {
+                Id = user.Id,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Address = user.Address,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Roles = await _userRepository.GetUserRolesByIdAsync(id)
+            };
+
             return userModel;
         }
 
-        public Task<bool> UpdateUserAsync(LoginDTO userModel)
+        public async Task<bool> UpdateUserAsync(UserDTO userModel)
         {
-            var user = new User { UserName = userModel.Email, Email = userModel.Email };
-            return _userRepository.UpdateUserAsync(user);
+            var user = await _userRepository.GetUserByIdAsync(userModel.Id);
+
+            if (user == null)
+            {
+                throw new ArgumentException("User not found");
+            }
+
+            user.Email ??= userModel.Email;
+            user.PhoneNumber ??= userModel.PhoneNumber;
+            user.Address ??= userModel.Address;
+            user.FirstName ??= userModel.FirstName;
+            user.LastName ??= userModel.LastName;
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+            foreach (var userRole in userRoles)
+            {
+                if (!userModel.Roles.Contains(userRole))
+                {
+                    await _userRepository.RemoveRole(user.Id, userRole);
+                }
+            }
+
+            foreach (var role in userModel.Roles)
+            {
+                if (!userRoles.Contains(role))
+                {
+                    await _userRepository.SetRole(user.Id, role);
+                }
+            }
+            
+            return await _userRepository.UpdateUserAsync(user);
         }
 
         public async Task<IEnumerable<RoleDTO>> GetRolesAsync()
@@ -128,11 +183,26 @@ namespace BusinessLogic.Services
             return await _userRepository.GetUserRolesByIdAsync(userId);
         }
 
-        public async Task<IEnumerable<UserDTO>> GetUsersAsync()
+        public async Task<(IEnumerable<UserDTO>, int)> GetUsersAsync(int page, int pageSize, string sortField, string sortOrder)
         {
-            var users = await _userRepository.GetUsersAsync();
+            Func<IQueryable<User>, IOrderedQueryable<User>> orderBy;
 
+            switch (sortOrder)
+            {
+                case "asc":
+                    orderBy = u => u.OrderBy(GetSortExpression(sortField));
+                    break;
+                case "desc":
+                    orderBy = u => u.OrderByDescending(GetSortExpression(sortField));
+                    break;
+                default:
+                    orderBy = u => u.OrderBy(GetSortExpression(sortField));
+                    break;
+            }
 
+            var users = await _userRepository.GetUsersAsync(orderBy: orderBy);
+
+            var usersCount = users.Count();
 
             var userModels = users.Select(u => new UserDTO
             {
@@ -142,19 +212,39 @@ namespace BusinessLogic.Services
                 Address = u.Address,
                 FirstName = u.FirstName,
                 LastName = u.LastName,
-            }).ToList();
+            }).Skip((page - 1) * pageSize).Take(pageSize).ToList();
 
             foreach (var userModel in userModels)
             {
                 if (userModel.Id != null)
                 {
                     var roles = await _userRepository.GetUserRolesByIdAsync(userModel.Id);
-
                     userModel.Roles = roles;
                 }
             }
 
-            return userModels;
+            return (userModels, usersCount);
+        }
+
+        private Expression<Func<User, object>> GetSortExpression(string sortField)
+        {
+            switch (sortField)
+            {
+                case "id":
+                    return u => u.Id;
+                case "email":
+                    return u => u.Email;
+                case "phoneNumber":
+                    return u => u.PhoneNumber;
+                case "address":
+                    return u => u.Address;
+                case "firstName":
+                    return u => u.FirstName;
+                case "lastName":
+                    return u => u.LastName;
+                default:
+                    return u => u.Id;
+            }
         }
 
         public Task<bool> SetUserRole(EditUserRolesDTO editUserRolesDTO)

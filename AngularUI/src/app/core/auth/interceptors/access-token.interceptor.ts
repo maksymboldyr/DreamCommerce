@@ -1,16 +1,21 @@
-import { HttpEvent, HttpHandler, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { tokenGetter } from '../../../app.config';
 
-export const accessTokenInterceptor: HttpInterceptorFn = (req, next) => {
-  const tokenAvailable = tokenGetter() !== null;
+@Injectable()
+export class AccessTokenInterceptor implements HttpInterceptor {
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    const tokenAvailable = tokenGetter();
 
-  if (tokenAvailable) {
-    req = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${tokenGetter()}`
-      }
-    });
+    if (tokenAvailable) {
+      req = req.clone({
+        setHeaders: {
+          Authorization: `Bearer ${tokenAvailable}`
+        }
+      });
+    }
+
+    return next.handle(req);
   }
-
-  return next(req);
-};
+}
