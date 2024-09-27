@@ -17,12 +17,18 @@ namespace BusinessLogic.Services
         private readonly IUserRepository _userRepository;
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly FilterBuilderService _filterBuilderService;
 
-        public UserService(IUserRepository userRepository, UserManager<User> userManager, IConfiguration configuration)
+        public UserService(
+            IUserRepository userRepository, 
+            UserManager<User> userManager, 
+            IConfiguration configuration, 
+            FilterBuilderService filterBuilderService)
         {
             _userRepository = userRepository;
             _userManager = userManager;
             _configuration = configuration;
+            _filterBuilderService = filterBuilderService;
         }
 
         public async Task<bool> CheckUserPasswordAsync(LoginDTO userModel)
@@ -183,9 +189,10 @@ namespace BusinessLogic.Services
             return await _userRepository.GetUserRolesByIdAsync(userId);
         }
 
-        public async Task<(IEnumerable<UserDTO>, int)> GetUsersAsync(int page, int pageSize, string sortField, string sortOrder)
+        public async Task<(IEnumerable<UserDTO>, int)> GetUsersAsync(string filter, int page, int pageSize, string sortField, string sortOrder)
         {
-            Func<IQueryable<User>, IOrderedQueryable<User>> orderBy;
+            var filterExpression = _filterBuilderService.BuildFilter<UserDTO>(filter);
+            Func<IQueryable<UserDTO>, IOrderedQueryable<UserDTO>> orderBy;
 
             switch (sortOrder)
             {
@@ -200,9 +207,8 @@ namespace BusinessLogic.Services
                     break;
             }
 
-            var users = await _userRepository.GetUsersAsync(orderBy: orderBy);
-
-            var usersCount = users.Count();
+            var users = await _userRepository.GetUsersAsync();
+            
 
             var userModels = users.Select(u => new UserDTO
             {
@@ -212,21 +218,22 @@ namespace BusinessLogic.Services
                 Address = u.Address,
                 FirstName = u.FirstName,
                 LastName = u.LastName,
-            }).Skip((page - 1) * pageSize).Take(pageSize).ToList();
+                Roles = _userRepository.GetUserRolesByIdAsync(u.Id).Result.ToList()
+            }).AsQueryable();
 
-            foreach (var userModel in userModels)
+            if (!string.IsNullOrEmpty(filter))
             {
-                if (userModel.Id != null)
-                {
-                    var roles = await _userRepository.GetUserRolesByIdAsync(userModel.Id);
-                    userModel.Roles = roles;
-                }
+                userModels = userModels.Where(filterExpression);
             }
+
+            var usersCount = userModels.Count();
+
+            userModels = orderBy(userModels).Skip((page - 1) * pageSize).Take(pageSize);
 
             return (userModels, usersCount);
         }
 
-        private Expression<Func<User, object>> GetSortExpression(string sortField)
+        private Expression<Func<UserDTO, object>> GetSortExpression(string sortField)
         {
             switch (sortField)
             {
@@ -242,6 +249,8 @@ namespace BusinessLogic.Services
                     return u => u.FirstName;
                 case "lastName":
                     return u => u.LastName;
+                case "roles":
+                    return u => u.Roles;
                 default:
                     return u => u.Id;
             }

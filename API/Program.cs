@@ -27,12 +27,10 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
 //builder.Services.AddDbContext<ApplicationContext>(
 //    options => options.UseInMemoryDatabase("AppDb"));
 
+builder.Services.AddScoped<FilterBuilderService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-
 builder.Services.AddScoped<IUserService, UserService>();
-
 builder.Services.AddScoped<UnitOfWork>();
-
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOrderService, OrderService>();

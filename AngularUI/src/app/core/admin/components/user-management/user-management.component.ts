@@ -12,6 +12,9 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { Router } from '@angular/router';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { InputTextModule } from 'primeng/inputtext';
+import { Filter } from '../../interfaces/filter';
+import { TableFilterService } from '../../services/table-filter.service';
+import { MultiSelectChangeEvent, MultiSelectModule } from 'primeng/multiselect';
 
 export interface RoleFlag {
   [key: string]: boolean;
@@ -30,33 +33,42 @@ export interface RoleFlag {
     FormsModule,
     ProgressSpinnerModule,
     InputTextModule,
+    MultiSelectModule,
   ],
   templateUrl: './user-management.component.html',
   styleUrl: './user-management.component.scss'
 })
 export class UserManagementComponent {
-  users : Array<UserDto> = [];
-  userToUpdate : UserDto | null = null;
+  router : Router;
   userService: UserService;
+  filterService: TableFilterService;
+
+  users : Array<UserDto> = [];
+  userToUpdate : UserDto | null = null; 
+
   editModalVisible : boolean = false;
   roleDroppdownHidden : boolean = true;
   selectedRoles: RoleFlag = {};
-  router : Router;
+  
 
   loading : boolean = true;
   totalRecords : number = 100;
-  page : number = 1;
-  pageSize : number = 10;
-  sortField :  Array<string> | string = '';
-  sortOrder : number = 1;
+  lastEvent: TableLazyLoadEvent = {};
+  globalRolesArray: string[] = [];
 
-  constructor(userService: UserService, router: Router) {
+  rolesToFilter: string[] = [];
+  
+
+  constructor(userService: UserService, router: Router, filterService: TableFilterService) {
     this.userService = userService;
     this.router = router;
+    this.filterService = filterService;
+    this.globalRolesArray = Object.keys(Role);
+    this.globalRolesArray.push('No Roles');
   }
 
   ngOnInit() {
-         
+    this.getUsers();
   }
 
   displayRoles(user: UserDto) {
@@ -67,18 +79,11 @@ export class UserManagementComponent {
     return Object.keys(Role).length;
   }
 
-  get globalRolesArray() : string[] {
-    let roles = Object.keys(Role);
-    return roles.filter(role => role !== 'User');
-  }
-
   get userRolesArray() : string[] {
     return this.userToUpdate?.roles || [];
   }
 
   get usersAssignedRoles() : RoleFlag {    
-    
-
     return this.selectedRoles;
   }
 
@@ -121,22 +126,20 @@ export class UserManagementComponent {
   getUsers() { 
     this.loading = true;  
     this.userService.getUsers(
-      this.page, 
-      this.pageSize, 
-      this.sortField, 
-      this.sortOrder
+      this.filterService.filtersString,
+      this.filterService.page, 
+      this.filterService.pageSize, 
+      this.filterService.sortField, 
+      this.filterService.sortOrder
     ).subscribe(tableData => {
       this.users = tableData.data;
       this.totalRecords = tableData.totalCount;
+      this.loading = false;
     });
   }
 
-  onEditUser() {
-    console.log('Edit user', this.userToUpdate);
-    
-    if (this.userToUpdate) {
-      console.log('updating');
-      
+  onEditUser() {    
+    if (this.userToUpdate) {      
       let updatedUser : UserAdminUpdateDto = {
         id: this.userToUpdate.id,
         roles: Object.keys(this.selectedRoles).filter(role => this.selectedRoles[role])
@@ -144,36 +147,40 @@ export class UserManagementComponent {
 
       this.userService.updateUser(updatedUser).subscribe(
         (response) => {
-          console.log(response); // "User updated successfully"
-          this.getUsers();
           this.closeModal();
+          this.loadData(this.lastEvent);
         },
         (error) => {
           console.error('Error updating user', error);
         }
-      );
-      
-    }
-
-    
+      );      
+    }    
   }
 
   loadData(event: TableLazyLoadEvent) {
+    if (event.filters) {  
+      this.filterService.applyFilters(event);
+    }
 
-    this.page = (event.first === 0 || event.first == undefined) ? 1 : event.first / (event.rows == undefined ? 1 : event.rows) + 1;
-    this.pageSize = event.rows == undefined ? 10 : event.rows;
-
-    this.sortField = event.sortField || '';
-    this.sortOrder = event.sortOrder || 1;
-
+    this.filterService.applyPaginationAndSorting(event);
+    
     this.getUsers();
 
     this.loading = false;
+    this.lastEvent = event;
+  }
 
+  applyMultiselectFilter(event: MultiSelectChangeEvent) {
+    if (event.value.includes('No Roles')) {
+      event.value = event.value.filter((role : string) => role !== 'No Roles');
+      event.value.push('');
+    }
+    
+    this.filterService.applyMultiselectFilter(event, 'Roles', this.lastEvent);
+    this.loadData(this.lastEvent);
   }
 
   deleteUser(user: UserDto) {
     console.log('Delete user', user);
   }
-
 }

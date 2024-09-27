@@ -7,7 +7,7 @@ namespace BusinessLogic.Interfaces
         Task<bool> CreateUserAsync(RegistrationDTO userModel);
         Task<bool> CheckUserPasswordAsync(LoginDTO userModel);
         Task<string> GetTokenByEmailAddressAsync(string email);
-        Task<(IEnumerable<UserDTO>, int)> GetUsersAsync(int page, int pageSize, string sortField, string sortOrder);
+        Task<(IEnumerable<UserDTO>, int)> GetUsersAsync(string filter, int page, int pageSize, string sortField, string sortOrder);
         Task<UserDTO> GetUserByIdAsync(string id);
         Task<UserDTO> GetUserByEmailAsync(string email);
         Task<bool> UpdateUserAsync(UserDTO userModel);

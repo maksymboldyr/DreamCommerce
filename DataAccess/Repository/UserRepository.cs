@@ -85,27 +85,7 @@ namespace DataAccess.Repository
             Func<IQueryable<User>, IOrderedQueryable<User>> orderBy = null,
             string includeProperties = "")
         {
-            var query = _userManager.Users;
-
-            if (filter != null)
-            {
-                query = query.Where(filter);
-            }
-
-            foreach (var includeProperty in includeProperties.Split
-                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
-            {
-                query = query.Include(includeProperty);
-            }
-
-            if (orderBy != null)
-            {
-                return await orderBy(query).ToListAsync();
-            }
-            else
-            {
-                return await query.ToListAsync();
-            }
+            return await _userManager.Users.ToListAsync();
         }
 
         public async Task<bool> RemoveRole(string userId, string roleName)

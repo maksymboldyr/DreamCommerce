@@ -1,0 +1,23 @@
+:host ::ng-deep .p-password { 
+    width: 100% !important;
+    margin-bottom: 1rem !important;
+    input { 
+        width: 100% !important;
+    }
+
+    
+}
+
+:host ::ng-deep div .p-password-panel { 
+    margin: 0;
+    max-width: 50% !important;
+}
+
+.error-message { 
+    color: red;
+    font-size: 12px;
+}
+
+.error-container  {
+    margin-bottom: 1rem !important;   
+}

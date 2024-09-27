@@ -1,6 +1,6 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '../../../../environments/environment';
 import { UserDto } from '../interfaces/user-dto';
 import { catchError, map, Observable } from 'rxjs';
 import { UserAdminUpdateDto } from '../interfaces/user-admin-update-dto';
@@ -21,12 +21,11 @@ export class UserService {
     this.router = router;
   }
 
-  getUsers(page: number, pageSize: number, sortField?: string | string[], sortOrder?: number): Observable<{ totalCount: number, data: UserDto[] }> {
+  getUsers(filter: string, page: number, pageSize: number, sortField?: string | string[], sortOrder?: number): Observable<{ totalCount: number, data: UserDto[] }> {
     let sortOrderString = sortOrder === 1 ? 'asc' : 'desc';
     return this.http.get<{ totalCount: number, data: UserDto[] }>(
-      `${this.api}/Users/get-users?page=${page}&pageSize=${pageSize}&sortField=${sortField}&sortOrder=${sortOrderString}`).pipe(
+      `${this.api}/Users/get-users?filter=${filter}&page=${page}&pageSize=${pageSize}&sortField=${sortField}&sortOrder=${sortOrderString}`).pipe(
       map((response: { totalCount: number, data: UserDto[] }) => {
-        console.log('getUsers response:', response); // Add this line
         
         return {
           totalCount: response.totalCount,
@@ -47,7 +46,6 @@ export class UserService {
   }
 
   updateUser(updatedUser: UserAdminUpdateDto): Observable<string> {
-    console.log('updateUser called with:', updatedUser); // Add this line
     return this.http.put(`${this.api}/Users/update-user`, updatedUser, { responseType: 'text' }).pipe(
       map((res: string) => {
         return res;

@@ -21,6 +21,9 @@ public class ApplicationContext : IdentityDbContext<User, Role, string>
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
+        //composite primary key for UserRoles
+        builder.Entity<UserRole>().HasKey(ur => new { ur.UserId, ur.RoleId });
+
         var adminRoleId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1b";
         var shopRoleId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1c";
 

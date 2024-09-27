@@ -367,10 +367,10 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/AngularUI/
-/AngularUI/AngularUI.esproj
 /API/marketplace.db
 /API/marketplace.db-shm
 /API/marketplace.db-wal
 /API/wwwroot/images/product
 /API/wwwroot/images/NotFound.png
+/AngularUI/.vscode
+/.gitignore

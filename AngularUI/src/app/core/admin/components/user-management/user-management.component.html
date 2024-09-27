@@ -1,5 +1,7 @@
-<div class="table-container">
-  <p-table styleClass="mx-auto w-full custom-table p-datatable-striped p-datatable-gridlines"
+<p-table 
+    [tableStyle]="{'width': '80rem', 'min-height': '20rem'}"
+    [scrollable]="true" 
+    scrollHeight="45rem" 
     [value]="users"
     [loading]="loading"
     [lazy]="true"
@@ -7,19 +9,40 @@
     [rows]="5"
     [totalRecords]="totalRecords"
     [rowsPerPageOptions]="[5, 10, 20]"    
-    [paginatorPosition]="'both'"
+    [paginatorPosition]="'bottom'"
     [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
     [sortOrder]="1"
-    [globalFilterFields]="['email', 'roles']"
     (onLazyLoad)="loadData($event)">
-    
     
     <ng-template pTemplate="header">
       <tr>
         <th>ID</th>
-        <th pSortableColumn="email">Email<p-sortIcon field="email"></p-sortIcon></th>
-        <th pSortableColumn="roles">Role<p-sortIcon field="roles"></p-sortIcon></th>
+        <th pSortableColumn="Email">Email<p-sortIcon field="Email"></p-sortIcon></th>
+        <th pSortableColumn="Roles">Role<p-sortIcon field="Roles"></p-sortIcon></th>
         <th>Actions</th>
+      </tr>
+      <tr>
+        <th>
+          <p-columnFilter type="text" field="Id" placeholder="Search by ID"></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter type="text" field="Email" placeholder="Search by email"></p-columnFilter>
+        </th>
+        <th>
+          <p-columnFilter 
+          [matchModeOptions]='[{label: "In", value: "in"}, {label: "Not In", value: "notIn"}]'
+          field="Roles">
+            <ng-template pTemplate="filter">
+              <p-multiSelect 
+              [options]="globalRolesArray"
+              placeholder="All" 
+              [showHeader]="false" 
+              [(ngModel)]="rolesToFilter"
+              (onChange)="applyMultiselectFilter($event)"></p-multiSelect>
+            </ng-template>            
+          </p-columnFilter>
+        </th>
+        <th></th>
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-user>
@@ -30,24 +53,35 @@
           <p *ngFor="let role of user.roles">{{role}} </p>
         </td>
         <td>
-          <button pButton type="button" icon="pi pi-pencil" class="p-button-rounded p-button-success" (click)="editUser(user)"></button>
-          <button pButton type="button" icon="pi pi-trash" class="p-button-rounded p-button-danger" (click)="deleteUser(user)"></button>
+          <p-button 
+          icon="pi pi-pencil" 
+          class="mr-2" 
+          [rounded]="true" 
+          [outlined]="true" 
+          severity="success" 
+          (click)="editUser(user)"
+          ></p-button>
+          <p-button 
+          icon="pi pi-trash" 
+          severity="danger" 
+          [rounded]="true" 
+          [outlined]="true"
+          (click)="deleteUser(user)"
+          ></p-button>
         </td>
-        </tr>
-        <p-dialog header="Edit User" [modal]="true" [(visible)]="editModalVisible" [style]="{ width: '25rem' }">
-        <div>
-          <div *ngFor="let enumRole of globalRolesArray" class="field-checkbox">
-                      <p-checkbox name="{{enumRole}}" binary="true" label="{{enumRole}}" [(ngModel)]="selectedRoles[enumRole]" ></p-checkbox>
-                      {{enumRole}}
-                      {{selectedRoles[enumRole]}}
-                      {{selectedRoles["User"]}}
-                  </div>
-              </div>
-              <div class="flex justify-content-end gap-2 mt-2">
-                <p-button label="Cancel" severity="secondary" (click)="closeModal()"></p-button>
-                <p-button label="Save" (click)="onEditUser()"></p-button>
-              </div>
-            </p-dialog>
-      </ng-template>
+      </tr>
+    </ng-template>
   </p-table>
-</div>
+
+  <p-dialog header="Edit User" [modal]="true" [(visible)]="editModalVisible" [style]="{ width: '25rem' }">
+    <h4>Roles</h4>
+    <div>
+      <div *ngFor="let enumRole of globalRolesArray" class="field-checkbox">
+        <p-checkbox name="{{enumRole}}" binary="true" label="{{enumRole}}" [(ngModel)]="selectedRoles[enumRole]"></p-checkbox>
+      </div>
+    </div>
+    <div class="flex justify-content-end gap-2 mt-2">
+      <p-button label="Cancel" severity="secondary" (click)="closeModal()"></p-button>
+      <p-button label="Save" (click)="onEditUser()"></p-button>
+    </div>
+  </p-dialog>

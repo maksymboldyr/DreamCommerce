@@ -3,6 +3,7 @@ using System;
 using DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20240924154203_AddUserRoleConstraint")]
+    partial class AddUserRoleConstraint
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.7");
@@ -169,11 +172,16 @@ namespace DataAccess.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("TEXT");
+
                     b.HasKey("Id");
 
                     b.HasIndex("NormalizedName")
                         .IsUnique()
                         .HasDatabaseName("RoleNameIndex");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("AspNetRoles", (string)null);
 
@@ -243,6 +251,9 @@ namespace DataAccess.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("RoleId")
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("TEXT");
 
@@ -269,15 +280,15 @@ namespace DataAccess.Migrations
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1a",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "1d1eb66e-cbd3-422f-846f-291e13734cdf",
+                            ConcurrencyStamp = "a08b82b9-dcb4-4abb-9ec1-74fcb0974eb2",
                             Email = "admin@mail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@MAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAECHrW0Ttxhajdo24fWAounmPamiHR68R3pJiSf2olu1TGpH8mo7O8EKJrY1+q90qmA==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFoCXPywNl7B0zRidkvNi6DzdBm9T0zTIItIYHd2AzMXYrzj+g5vucg0T4C/LfrR7w==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "db93fde0-d11d-4266-9d3c-5f65efb7e7e1",
+                            SecurityStamp = "e615d05e-e79a-40bb-a838-4e5967681d0f",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         },
@@ -285,15 +296,15 @@ namespace DataAccess.Migrations
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1b",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "328a8aea-9b1e-4ab5-9640-80fc271d5be5",
+                            ConcurrencyStamp = "a118f855-bde0-44b0-9998-a20cbc1c8838",
                             Email = "shop@mail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "SHOP@MAIL.COM",
                             NormalizedUserName = "SHOP",
-                            PasswordHash = "AQAAAAIAAYagAAAAEC1qozluv3TyfjvD/2G6RaCzy0MqU6WZ3RZuFuzkP94OF25MEGUpppBg72x2rCqhqw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAENF+wWYVkh5DitpfXc4Likt/ndZrtBDrzfVVxeQUEwCOiy7JAhy8S2xwAKDxN4EpiQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "07c66b7f-1990-4c4b-abae-293fe03553b1",
+                            SecurityStamp = "8530bea7-a704-4f2f-b0b2-52d0379aa7d1",
                             TwoFactorEnabled = false,
                             UserName = "shop"
                         },
@@ -301,33 +312,18 @@ namespace DataAccess.Migrations
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1c",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "3006f225-b6c5-4d43-af65-adceab1ea7d6",
+                            ConcurrencyStamp = "b6e1bf6b-3e2d-47c9-a3fe-84d2bad21ce3",
                             Email = "user@mail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "USER@MAIL.COM",
                             NormalizedUserName = "USER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEAicGEmQVy5UiGna2QIxlR1A06TgVYX005b+GPBiKU3CsM/9+W1XTNi2kks2SlkE2Q==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEH+0Wh0DG0aOoDot2r48GMIecm9o/5lwaY1JOY09v6pevPWppl2vsX8+EANk7UZJoQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ccd4b725-4652-40d1-8470-deec6f043ea7",
+                            SecurityStamp = "5946ce33-a449-4a34-ba91-f698f4eeb29a",
                             TwoFactorEnabled = false,
                             UserName = "user"
                         });
-                });
-
-            modelBuilder.Entity("DataAccess.Entities.Users.UserRole", b =>
-                {
-                    b.Property<string>("UserId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("RoleId")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("UserId", "RoleId");
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("UserRole");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -500,23 +496,11 @@ namespace DataAccess.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("DataAccess.Entities.Users.UserRole", b =>
+            modelBuilder.Entity("DataAccess.Entities.Users.Role", b =>
                 {
-                    b.HasOne("DataAccess.Entities.Users.Role", "Role")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DataAccess.Entities.Users.User", "User")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Role");
-
-                    b.Navigation("User");
+                    b.HasOne("DataAccess.Entities.Users.User", null)
+                        .WithMany("Roles")
+                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -587,14 +571,9 @@ namespace DataAccess.Migrations
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("DataAccess.Entities.Users.Role", b =>
-                {
-                    b.Navigation("UserRoles");
-                });
-
             modelBuilder.Entity("DataAccess.Entities.Users.User", b =>
                 {
-                    b.Navigation("UserRoles");
+                    b.Navigation("Roles");
                 });
 #pragma warning restore 612, 618
         }
