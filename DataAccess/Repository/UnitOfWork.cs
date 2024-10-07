@@ -1,90 +1,55 @@
 ﻿using DataAccess.Entities;
 using DataAccess.Entities.Users;
+using DataAccess.Interfaces;
+using System;
 
 namespace DataAccess.Repository
 {
-    public class UnitOfWork : IDisposable
+    public class UnitOfWork(ApplicationDbContext context) : IDisposable, IUnitOfWork
     {
-        private readonly ApplicationContext context;
-        private RepositoryBase<Category> categoryRepository;
-        private RepositoryBase<Subcategory> subcategoryRepository;
-        private RepositoryBase<Product> productRepository;
-        private RepositoryBase<Order> orderRepository;
-        private RepositoryBase<OrderDetail> orderDetailRepository;
 
-        public UnitOfWork(ApplicationContext context)
+        // Repositories for each entity
+        private IRepositoryBase<Category>? categoryRepository;
+        private IRepositoryBase<Subcategory>? subcategoryRepository;
+        private IRepositoryBase<Product>? productRepository;
+        private IRepositoryBase<Order>? orderRepository;
+        private IRepositoryBase<OrderDetail>? orderDetailRepository;
+        private IRepositoryBase<Tag>? tagRepository;
+        private IRepositoryBase<TagValue>? tagValueRepository;
+
+        public IRepositoryBase<Category> CategoryRepository
         {
-            this.context = context;
+            get => categoryRepository ??= new RepositoryBase<Category>(context);
         }
 
-        public RepositoryBase<Category> CategoryRepository
+        public IRepositoryBase<Subcategory> SubcategoryRepository
         {
-            get
-            {
-                if (categoryRepository == null)
-                {
-                    categoryRepository = new RepositoryBase<Category>(context);
-                }
-                return categoryRepository;
-            }
+            get => subcategoryRepository ??= new RepositoryBase<Subcategory>(context);
         }
 
-        public RepositoryBase<Subcategory> SubcategoryRepository
+        public IRepositoryBase<Product> ProductRepository
         {
-            get
-            {
-                if (subcategoryRepository == null)
-                {
-                    subcategoryRepository = new RepositoryBase<Subcategory>(context);
-                }
-                return subcategoryRepository;
-            }
+            get => productRepository ??= new RepositoryBase<Product>(context);
         }
 
-        public RepositoryBase<Product> ProductRepository
+        public IRepositoryBase<Order> OrderRepository
         {
-            get
-            {
-                if (productRepository == null)
-                {
-                    productRepository = new RepositoryBase<Product>(context);
-                }
-                return productRepository;
-            }
+            get => orderRepository ??= new RepositoryBase<Order>(context);
         }
 
-        public RepositoryBase<Order> OrderRepository
+        public IRepositoryBase<OrderDetail> OrderDetailRepository
         {
-            get
-            {
-                if (orderRepository == null)
-                {
-                    orderRepository = new RepositoryBase<Order>(context);
-                }
-                return orderRepository;
-            }
+            get => orderDetailRepository ??= new RepositoryBase<OrderDetail>(context);
         }
 
-        public RepositoryBase<OrderDetail> OrderDetailRepository
+        public IRepositoryBase<Tag> TagRepository
         {
-            get
-            {
-                if (orderDetailRepository == null)
-                {
-                    orderDetailRepository = new RepositoryBase<OrderDetail>(context);
-                }
-                return orderDetailRepository;
-            }
+            get => tagRepository ??= new RepositoryBase<Tag>(context);
         }
 
-        public void Save()
+        public IRepositoryBase<TagValue> TagValueRepository
         {
-            context.SaveChanges();
-        }
-
-        public async Task SaveAsync()
-        {
-            await context.SaveChangesAsync();
+            get => tagValueRepository ??= new RepositoryBase<TagValue>(context);
         }
 
         private bool disposed = false;

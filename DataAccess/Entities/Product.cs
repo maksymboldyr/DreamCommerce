@@ -1,20 +1,37 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DataAccess.Entities
+namespace DataAccess.Entities;
+
+public class Product : BaseEntity
 {
-    public class Product : BaseEntity
-    {
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public decimal Price { get; set; }
-        public float Discount { get; set; }
-        public int Stock { get; set; }
-        [ForeignKey("Category")]
-        public string? CategoryId { get; set; }
-        [ForeignKey("Subcategory")]
-        public string? SubcategoryId { get; set; }
-        public string? ImageUrl { get; set; }
-        public Subcategory Subcategory { get; set; }
-        public Category Category { get; set; }
-    }
+    [Required]
+    public string SubcategoryId { get; set; }
+
+    [ForeignKey("SubcategoryId")]
+    public Subcategory Subcategory { get; set; }
+
+    [Required]
+    [MaxLength(500)]
+    public string Description { get; set; }
+
+    [Range(0, 100)]
+    public double Discount { get; set; }
+
+    [MaxLength(255)]
+    public string ImageUrl { get; set; }
+
+    [Required]
+    [MaxLength(100)]
+    public string Name { get; set; }
+
+    [Required]
+    [Column(TypeName = "decimal(18,2)")]
+    public decimal Price { get; set; }
+
+    [Required]
+    [Range(0, int.MaxValue)]
+    public int Stock { get; set; }
+
+    public List<ProductTag> ProductsTags { get; set; } = new List<ProductTag>();
 }

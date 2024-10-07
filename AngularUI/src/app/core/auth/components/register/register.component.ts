@@ -71,10 +71,6 @@ export class RegisterComponent {
     return this.password?.errors || {};
   }
 
-  // Creating register dto
-  
-  
-
   onSubmit() {    
     const registerDto: RegisterDto = {
       email: this.email?.value,

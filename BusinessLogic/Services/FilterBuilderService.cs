@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace BusinessLogic.Services
 {
@@ -25,38 +22,18 @@ namespace BusinessLogic.Services
                 var property = Expression.Property(parameter, propertyName);
 
                 var value = parts.Length > 2 ? string.Join(" ", parts.Skip(2)) : string.Empty;
-
-                Expression comparisonExpression;
-                switch (matchMode)
+                Expression comparisonExpression = matchMode switch
                 {
-                    case "startsWith":
-                        comparisonExpression = Expression.Call(property, typeof(string).GetMethod("StartsWith", new[] { typeof(string) }), Expression.Constant(value));
-                        break;
-                    case "contains":
-                        comparisonExpression = Expression.Call(property, typeof(string).GetMethod("Contains", new[] { typeof(string) }), Expression.Constant(value));
-                        break;
-                    case "notContains":
-                        comparisonExpression = Expression.Not(Expression.Call(property, typeof(string).GetMethod("Contains", new[] { typeof(string) }), Expression.Constant(value)));
-                        break;
-                    case "endsWith":
-                        comparisonExpression = Expression.Call(property, typeof(string).GetMethod("EndsWith", new[] { typeof(string) }), Expression.Constant(value));
-                        break;
-                    case "equals":
-                        comparisonExpression = Expression.Equal(property, Expression.Constant(value));
-                        break;
-                    case "notEquals":
-                        comparisonExpression = Expression.NotEqual(property, Expression.Constant(value));
-                        break;
-                    case "in":
-                        comparisonExpression = InExpression(property, value);
-                        break;
-                    case "notIn":
-                        comparisonExpression = NotInExpression(property, value);                        
-                        break;
-                    default:
-                        throw new ArgumentException($"Invalid match mode: {matchMode}");
-                }
-
+                    "startsWith" => Expression.Call(property, typeof(string).GetMethod("StartsWith", [typeof(string)]), Expression.Constant(value)),
+                    "contains" => Expression.Call(property, typeof(string).GetMethod("Contains", [typeof(string)]), Expression.Constant(value)),
+                    "notContains" => Expression.Not(Expression.Call(property, typeof(string).GetMethod("Contains", [typeof(string)]), Expression.Constant(value))),
+                    "endsWith" => Expression.Call(property, typeof(string).GetMethod("EndsWith", [typeof(string)]), Expression.Constant(value)),
+                    "equals" => Expression.Equal(property, Expression.Constant(value)),
+                    "notEquals" => Expression.NotEqual(property, Expression.Constant(value)),
+                    "in" => InExpression(property, value),
+                    "notIn" => NotInExpression(property, value),
+                    _ => throw new ArgumentException($"Invalid match mode: {matchMode}"),
+                };
                 filterExpression = Expression.AndAlso(filterExpression, comparisonExpression);
             }
 
@@ -65,21 +42,21 @@ namespace BusinessLogic.Services
             return lambdaExpression;
         }
 
-        private Expression InExpression(Expression property, string value)
+        private BinaryExpression InExpression(Expression property, string value)
         {
             var comparisonExpression = InComparsion(property, value);
 
             return Expression.AndAlso(ExcludeEmpty(property), comparisonExpression);
         }
 
-        private Expression NotInExpression(Expression property, string value)
+        private UnaryExpression NotInExpression(Expression property, string value)
         {
             var comparisonExpression = Expression.Not(InComparsion(property, value));
 
             return comparisonExpression;
         }
 
-        private Expression InComparsion(Expression property, string value)
+        private MethodCallExpression InComparsion(Expression property, string value)
         {
             var values = value.Split(',').ToArray();
             var arrayConstant = Expression.Constant(values);
@@ -94,9 +71,9 @@ namespace BusinessLogic.Services
             return Expression.Call(allMethod, arrayConstant, lambda);
         }
 
-        private Expression ExcludeEmpty(Expression property)
+        private static BinaryExpression ExcludeEmpty(Expression property)
         {
-            return Expression.NotEqual(Expression.Call(typeof(Enumerable), "Any", new[] { typeof(string) }, property), Expression.Constant(false));
+            return Expression.NotEqual(Expression.Call(typeof(Enumerable), "Any", [typeof(string)], property), Expression.Constant(false));
         }
     }
 }

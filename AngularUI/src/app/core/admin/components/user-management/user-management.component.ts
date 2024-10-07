@@ -23,6 +23,7 @@ export interface RoleFlag {
 @Component({
   selector: 'app-user-management',
   standalone: true,
+  providers: [TableFilterService],
   imports: [
     TableModule,
     ButtonModule,
@@ -67,7 +68,7 @@ export class UserManagementComponent {
     this.globalRolesArray.push('No Roles');
   }
 
-  ngOnInit() {
+  ngOnInit() {    
     this.getUsers();
   }
 
@@ -125,7 +126,7 @@ export class UserManagementComponent {
 
   getUsers() { 
     this.loading = true;  
-    this.userService.getUsers(
+    this.userService.getFiltered(
       this.filterService.filtersString,
       this.filterService.page, 
       this.filterService.pageSize, 
@@ -145,7 +146,7 @@ export class UserManagementComponent {
         roles: Object.keys(this.selectedRoles).filter(role => this.selectedRoles[role])
       };
 
-      this.userService.updateUser(updatedUser).subscribe(
+      this.userService.update(updatedUser).subscribe(
         (response) => {
           this.closeModal();
           this.loadData(this.lastEvent);

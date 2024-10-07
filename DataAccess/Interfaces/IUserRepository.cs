@@ -8,10 +8,7 @@ namespace DataAccess.Interfaces
         Task<bool> CreateUserAsync(User user);
         Task<User> GetUserByIdAsync(string id);
         Task<User> GetUserByEmailAsync(string email);
-        Task<IEnumerable<User>> GetUsersAsync(
-            Expression<Func<User, bool>> filter = null,
-            Func<IQueryable<User>, IOrderedQueryable<User>> orderBy = null,
-            string includeProperties = "");
+        Task<IEnumerable<User>> GetUsersAsync();
         Task<bool> UpdateUserAsync(User user);
         Task<bool> DeleteUserAsync(string id);
         

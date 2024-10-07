@@ -5,7 +5,7 @@ namespace BusinessLogic.Interfaces
     public interface IProductService 
     {
         Task<IEnumerable<ProductDTO>> GetProducts();
-        Task<IEnumerable<ProductDTO>> GetProducts(string name, int page, int pageSize);
+        Task<(IEnumerable<ProductDTO>, int)> GetProductsWithCount(string name, int page, int pageSize, string sortField, string sortOrder);
         Task<ProductDTO> GetProductById(string id);
         Task CreateProduct(ProductDTO productModel);
         Task UpdateProduct(ProductDTO productModel);

@@ -10,6 +10,5 @@ export interface UserDto {
 
 export enum Role {
     Admin = 'Admin',
-    Shop = 'Shop',
-    User = 'User'
+    Shop = 'Shop'
 }

@@ -2,9 +2,7 @@
 using BusinessLogic.Interfaces;
 using BusinessLogic.DTO;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using API.Models;
-using System.Diagnostics;
 
 namespace API.Controllers
 {
@@ -93,7 +91,6 @@ namespace API.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult<TableViewModel<UserDTO>>> GetUsers([FromQuery] string filter = "", [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "id", [FromQuery] string sortOrder = "asc")
         {
-            var myFilter = filter;
             try
             {
                 var usersWithCount = await _userService.GetUsersAsync(filter, page, pageSize, sortField, sortOrder);

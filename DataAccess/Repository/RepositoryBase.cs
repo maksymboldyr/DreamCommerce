@@ -1,25 +1,21 @@
-﻿using DataAccess.Interfaces;
+﻿using DataAccess.Entities;
+using DataAccess.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace DataAccess.Repository
 {
-    public class RepositoryBase<T> : IRepositoryBase<T> where T : class
+    public class RepositoryBase<T>(ApplicationDbContext context) : IRepositoryBase<T> where T : BaseEntity
     {
-        private readonly ApplicationContext context;
-        private readonly DbSet<T> dbSet;
-
-        public RepositoryBase(ApplicationContext context) {
-            this.context = context;
-            dbSet = context.Set<T>();
-        }
+        private readonly DbSet<T> dbSet = context.Set<T>();
+        private readonly char[] separator = [','];
 
         public async Task<IEnumerable<T>> GetAsync(
-            Expression<Func<T, bool>> filter = null, 
-            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, 
+            Expression<Func<T, bool>>? filter = null,
+            Func<IQueryable<T>, IOrderedQueryable<T>>? orderBy = null,
             string includeProperties = "")
         {
-            IQueryable<T> query = dbSet;
+            IQueryable<T> query = dbSet.AsNoTracking();
 
             if (filter != null)
             {
@@ -27,61 +23,49 @@ namespace DataAccess.Repository
             }
 
             foreach (var includeProperty in includeProperties.Split
-                (new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+                (separator, StringSplitOptions.RemoveEmptyEntries))
             {
                 query = query.Include(includeProperty);
             }
 
-            if (orderBy != null)
-            {
-                return await orderBy(query).ToListAsync();
-            }
-            else
-            {
-                return await query.ToListAsync();
-            }
+            return orderBy != null
+                ? await orderBy(query).ToListAsync()
+                : await query.ToListAsync();
         }
 
         public async Task<T> GetByIdAsync(string id)
         {
             var entity = await dbSet.FindAsync(id);
-
-            if (entity == null) {
-                throw new ArgumentException("Entity not found");
-            }
-
-            return entity;
+            return entity ?? throw new KeyNotFoundException("Entity not found");
         }
 
         public async Task InsertAsync(T entity)
         {
-            await dbSet.AddAsync(entity);          
+            await dbSet.AddAsync(entity);
+            await context.SaveChangesAsync();
         }
 
         public void Update(T entity)
         {
             dbSet.Attach(entity);
             context.Entry(entity).State = EntityState.Modified;
+            context.SaveChanges();
         }
 
-        public async Task Delete(string id)
+        public async Task DeleteAsync(string id)
         {
-            T entityToDelete = await dbSet.FindAsync(id);
-
-            if (entityToDelete == null) {
-                throw new ArgumentException("Entity not found");
-            }
-
-            Delete(entityToDelete);
+            T? entityToDelete = await dbSet.FindAsync(id) ?? throw new KeyNotFoundException("Entity not found");
+            await DeleteAsync(entityToDelete);
         }
 
-        private void Delete(T entityToDelete)
+        private async Task DeleteAsync(T entityToDelete)
         {
             if (context.Entry(entityToDelete).State == EntityState.Detached)
             {
                 dbSet.Attach(entityToDelete);
             }
             dbSet.Remove(entityToDelete);
+            await context.SaveChangesAsync();
         }
     }
 }

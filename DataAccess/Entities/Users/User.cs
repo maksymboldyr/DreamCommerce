@@ -1,14 +1,23 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DataAccess.Entities.Users;
-
-public class User : IdentityUser
+namespace DataAccess.Entities.Users
 {
-    public string? FirstName { get; set; }
-    public string? LastName { get; set; }
-    public string? Address { get; set; }
+    public class User : IdentityUser
+    {
+        [MaxLength(50)] // Limit first name length to 50 characters
+        public string? FirstName { get; set; }
 
-    public List<UserRole> UserRoles { get; set; } = new List<UserRole>();
-    
+        [MaxLength(50)] // Limit last name length to 50 characters
+        public string? LastName { get; set; }
+
+        [ForeignKey("Address")]
+        public string? AddressId { get; set; }
+
+        public Address? Address { get; set; }
+
+        public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+
+    }
 }

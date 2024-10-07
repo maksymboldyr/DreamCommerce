@@ -37,6 +37,11 @@ export class AdminPanelComponent {
           icon: 'pi pi-fw pi-tags',
           routerLink: 'subcategories'
         },
+        {
+          label: 'Products',
+          icon: 'pi pi-fw pi-shopping-cart',
+          routerLink: 'products'
+        }
       ]
     }
   ];

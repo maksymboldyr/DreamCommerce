@@ -9,7 +9,9 @@ using DataAccess.Entities.Users;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
-using System.Text.Json.Serialization;
+using BusinessLogic.Services.Domain;
+using DataAccess.Entities;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,13 +23,15 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader());
 });
 
-builder.Services.AddDbContext<ApplicationContext>(options =>
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("MarketplaceDB")));
 
 //builder.Services.AddDbContext<ApplicationContext>(
 //    options => options.UseInMemoryDatabase("AppDb"));
 
 builder.Services.AddScoped<FilterBuilderService>();
+builder.Services.AddScoped(typeof(SortingService<>));
+
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<UnitOfWork>();
@@ -38,7 +42,7 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddAuthorization();
 
 builder.Services.AddIdentity<User, Role>()
-                .AddEntityFrameworkStores<ApplicationContext>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
 builder.Services.AddAuthentication(options =>
@@ -83,6 +87,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseStaticFiles();
 
 app.MapPost("/validate-access-token", () => Results.Ok()).RequireAuthorization();
 

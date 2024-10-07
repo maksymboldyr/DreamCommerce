@@ -7,6 +7,8 @@ import { AdminPanelComponent } from './core/admin/components/admin-panel/admin-p
 import { UserManagementComponent } from './core/admin/components/user-management/user-management.component';
 import { CategoriesComponent } from './core/admin/components/categories/categories.component';
 import { SubcategoriesComponent } from './core/admin/components/subcategories/subcategories.component';
+import { ProductsComponent } from './core/admin/components/products/products.component';
+
 
 export const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -22,6 +24,7 @@ export const routes: Routes = [
             { path: 'users', component: UserManagementComponent },
             { path: 'categories', component: CategoriesComponent },
             { path: 'subcategories', component: SubcategoriesComponent },
+            { path: 'products', component: ProductsComponent }
         ],
     },
 ];

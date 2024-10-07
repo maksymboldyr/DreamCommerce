@@ -21,7 +21,7 @@ export class UserService {
     this.router = router;
   }
 
-  getUsers(filter: string, page: number, pageSize: number, sortField?: string | string[], sortOrder?: number): Observable<{ totalCount: number, data: UserDto[] }> {
+  getFiltered(filter: string, page: number, pageSize: number, sortField?: string | string[], sortOrder?: number): Observable<{ totalCount: number, data: UserDto[] }> {
     let sortOrderString = sortOrder === 1 ? 'asc' : 'desc';
     return this.http.get<{ totalCount: number, data: UserDto[] }>(
       `${this.api}/Users/get-users?filter=${filter}&page=${page}&pageSize=${pageSize}&sortField=${sortField}&sortOrder=${sortOrderString}`).pipe(
@@ -45,7 +45,7 @@ export class UserService {
     );
   }
 
-  updateUser(updatedUser: UserAdminUpdateDto): Observable<string> {
+  update(updatedUser: UserAdminUpdateDto): Observable<string> {
     return this.http.put(`${this.api}/Users/update-user`, updatedUser, { responseType: 'text' }).pipe(
       map((res: string) => {
         return res;

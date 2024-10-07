@@ -1,0 +1,82 @@
+<p-toolbar styleClass="mb-4 gap-2">
+    <ng-template pTemplate="left">
+        <p-button 
+            severity="success" 
+            label="New" 
+            icon="pi pi-plus" 
+            class="mr-2"  
+            (click)="toggleAddDialog()"
+            />
+    </ng-template>
+</p-toolbar>
+<p-table
+    [tableStyle]="{'width': '80rem', 'min-height': '20rem'}"
+    [scrollable]="true" 
+    scrollHeight="45rem" 
+    [value]="categories"
+    [loading]="loading"
+    [lazy]="true"
+    [paginator]="true"
+    [rows]="5"
+    [totalRecords]="totalRecords"
+    [rowsPerPageOptions]="[5, 10, 20]"    
+    [paginatorPosition]="'bottom'"
+    [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [sortOrder]="1"
+    (onLazyLoad)="loadData($event)">
+    <ng-template pTemplate="header">
+        <tr>
+            <th class="w-4rem"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
+            <th pSortableColumn="Id">Id<p-sortIcon field="Id"></p-sortIcon></th>
+            <th pSortableColumn="Name">Name<p-sortIcon field="Name"></p-sortIcon></th>
+            <th>Actions</th>
+        </tr>
+        <tr>
+            <th></th>
+            <th>
+                <p-columnFilter type="text" field="Id" placeholder="Search by ID"></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter type="text" field="Name" placeholder="Search by Name"></p-columnFilter>
+            </th>
+            <th></th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-category>
+        <tr>
+            <td><p-tableCheckbox [value]="category"></p-tableCheckbox></td>
+            <td>{{category.id}}</td>
+            <td>{{category.name}}</td>
+            <td>
+                <p-button 
+                icon="pi pi-pencil" 
+                class="mr-2" 
+                [rounded]="true" 
+                [outlined]="true" 
+                severity="success" 
+                (click)="editCategory(category)"
+                ></p-button>
+                <p-button 
+                icon="pi pi-trash" 
+                severity="danger" 
+                [rounded]="true" 
+                [outlined]="true"
+                (click)="deleteCategory(category)"
+                ></p-button>
+            </td>
+        </tr>
+    </ng-template>        
+</p-table>
+
+<p-dialog header="Add Category" [(visible)]="categoryFormVisible" class="w-25rem" [modal]="true" [responsive]="true">
+    <form [formGroup]="addCategoryForm" (ngSubmit)="addCategory()">
+        <div class="flex align-items-center gap-3 mb-5 mt-3">
+            <label for="name" class="font-semibold w-6rem">Name</label>
+            <input id="name" type="text" pInputText formControlName="name" class="flex-auto" required autofocus/>
+        </div>
+        <p-footer class="flex justify-content-end mt-3 gap-2">
+            <button type="button" pButton label="Cancel" icon="pi pi-times" severity="secondary" (click)="toggleAddDialog()"></button>
+            <button type="submit" pButton label="Save" icon="pi pi-check"></button>
+        </p-footer>
+    </form>
+</p-dialog>

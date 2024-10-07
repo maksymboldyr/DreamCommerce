@@ -6,22 +6,15 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OrdersController : ControllerBase
+    public class OrdersController(IOrderService orderService) : ControllerBase
     {
-        private readonly IOrderService _orderService;
-
-        public OrdersController(IOrderService orderService)
-        {
-            _orderService = orderService;
-        }
-
         // GET: api/Orders
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrderDTO>>> GetOrders([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<OrderDTO>>> GetOrders([FromQuery] string filter = "", [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "Id", [FromQuery] string sortOrder = "asc")
         {
             try
             {
-                var orders = await _orderService.GetOrders(page, pageSize);
+                var orders = await orderService.GetOrders(filter, page, pageSize, sortField, sortOrder);
                 return Ok(orders);
             }
             catch (Exception ex)
@@ -32,11 +25,11 @@ namespace API.Controllers
 
         [HttpGet]
         [Route("details")]
-        public async Task<ActionResult<IEnumerable<OrderDTO>>> GetOrdersWithDetails([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<OrderDTO>>> GetOrdersWithDetails([FromQuery] string filter = "", [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "Id", [FromQuery] string sortOrder = "asc")
         {
             try
             {
-                var orders = await _orderService.GetOrdersWithDetails(page, pageSize);
+                var orders = await orderService.GetOrders(filter, page, pageSize, sortField, sortOrder);
                 return Ok(orders);
             }
             catch (Exception ex)
@@ -51,7 +44,7 @@ namespace API.Controllers
         {
             try
             {
-                var orders = await _orderService.GetOrdersByUserId(userId, page, pageSize);
+                var orders = await orderService.GetOrdersByUserId(userId, page, pageSize);
                 return Ok(orders);
             }
             catch (Exception ex)
@@ -66,7 +59,7 @@ namespace API.Controllers
         {
             try
             {
-                var order = await _orderService.GetOrderById(id);
+                var order = await orderService.GetOrderById(id);
 
                 if (order == null)
                 {
@@ -86,7 +79,7 @@ namespace API.Controllers
         {
             try
             {
-                var order = await _orderService.GetOrderByIdWithDetails(id);
+                var order = await orderService.GetOrderByIdWithDetails(id);
 
                 if (order == null)
                 {
@@ -101,27 +94,13 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("OrderDetails")]
-        public async Task<ActionResult<IEnumerable<OrderDetailDTO>>> GetOrderDetails([FromQuery] int page = 1, [FromQuery] int pageSize = 10)
-        {
-            try
-            {
-                var orderDetails = await _orderService.GetOrderDetails(page, pageSize);
-                return Ok(orderDetails);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
         // POST: api/Orders
         [HttpPost]
         public async Task<ActionResult> CreateOrder([FromBody] OrderDTO order)
         {
             try
             {
-                await _orderService.CreateOrder(order);
+                await orderService.CreateOrder(order);
                 return StatusCode(201, "Order created successfully");
             }
             catch (Exception ex)
@@ -136,7 +115,7 @@ namespace API.Controllers
         {
             try
             {
-                await _orderService.CreateOrderDetail(orderDetail);
+                await orderService.CreateOrderDetail(orderDetail);
                 return StatusCode(201, "Order detail created successfully");
             }
             catch (Exception ex)
@@ -146,12 +125,12 @@ namespace API.Controllers
         }
 
         // PUT: api/Orders/{id}
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateOrder(string id, [FromBody] OrderDTO order)
+        [HttpPut]
+        public async Task<ActionResult> UpdateOrder([FromBody] OrderDTO order)
         {
             try
             {
-                await _orderService.UpdateOrder(order);
+                orderService.UpdateOrder(order);
                 return StatusCode(200, "Order updated successfully");
             }
             catch (Exception ex)
@@ -161,12 +140,12 @@ namespace API.Controllers
         }
 
         // PUT: api/Orders/OrderDetails/{id}
-        [HttpPut("OrderDetails/{id}")]
-        public async Task<ActionResult> UpdateOrderDetail(string id, [FromBody] OrderDetailDTO orderDetail)
+        [HttpPut("OrderDetails")]
+        public async Task<ActionResult> UpdateOrderDetail([FromBody] OrderDetailDTO orderDetail)
         {
             try
             {
-                await _orderService.UpdateOrderDetail(orderDetail);
+                orderService.UpdateOrderDetail(orderDetail);
                 return StatusCode(200, "Order detail updated successfully");
             }
             catch (Exception ex)
@@ -181,7 +160,7 @@ namespace API.Controllers
         {
             try
             {
-                await _orderService.DeleteOrder(id);
+                await orderService.DeleteOrder(id);
                 return StatusCode(200, "Order deleted successfully");
             }
             catch (Exception ex)
@@ -196,7 +175,7 @@ namespace API.Controllers
         {
             try
             {
-                await _orderService.DeleteOrderDetail(id);
+                await orderService.DeleteOrderDetail(id);
                 return StatusCode(200, "Order detail deleted successfully");
             }
             catch (Exception ex)

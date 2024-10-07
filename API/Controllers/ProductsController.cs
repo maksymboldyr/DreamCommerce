@@ -20,12 +20,22 @@ namespace API.Controllers
 
         // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProducts([FromQuery] string name = "", [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        public async Task<ActionResult<TableViewModel<ProductDTO>>> GetProducts([FromQuery] string name = "", [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "Name", [FromQuery] string sortOrder = "asc")
         {
             try
             {
-                var products = await _productService.GetProducts(name, page, pageSize);
-                return Ok(products);
+                var products = await _productService.GetProductsWithCount(name, page, pageSize, sortField, sortOrder);
+
+
+
+                var tableViewModel = new TableViewModel<ProductDTO>
+                {
+                    Data = products.Item1,
+                    TotalCount = products.Item2,
+                };
+
+                
+                return Ok(tableViewModel);
             }
             catch (Exception ex)
             {
@@ -60,7 +70,7 @@ namespace API.Controllers
         {
             try
             {
-                product.ImageUrl = Path.Combine(_webHostEnvironment.WebRootPath, @"images\NotFound.png");
+                product.ImageUrl = @"images/NotFound.png";
                 await _productService.CreateProduct(product);
                 return StatusCode(201, "Product created successfully.");
             }
@@ -89,24 +99,25 @@ namespace API.Controllers
                 if (model.Image != null)
                 {
                     string fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.Image.FileName);
+                    string imageUrl = Path.Combine(@"images\product", fileName);
                     string productPath = Path.Combine(wwwRootPath, @"images\product");
-                    string fullPath = Path.Combine(productPath, fileName);
+                    string fullPath = Path.Combine(wwwRootPath, imageUrl);
 
                     if (!Directory.Exists(productPath))
                     {
                         Directory.CreateDirectory(productPath);
                     }
 
-                    using (FileStream fileStream = new FileStream(fullPath, FileMode.Create))
+                    using (FileStream fileStream = new(fullPath, FileMode.Create))
                     {
                         await model.Image.CopyToAsync(fileStream);
                     }
 
-                    product.ImageUrl = fullPath; // Update existing product
+                    product.ImageUrl = imageUrl; // Update existing product
                 }
                 else
                 {
-                    product.ImageUrl = Path.Combine(wwwRootPath, @"images\NotFound.png");
+                    product.ImageUrl = @"images/NotFound.png";
                 }
 
                 // Save changes to the product entity

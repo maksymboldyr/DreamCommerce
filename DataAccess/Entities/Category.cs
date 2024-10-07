@@ -1,9 +1,12 @@
-﻿namespace DataAccess.Entities
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace DataAccess.Entities;
+
+public class Category : BaseEntity
 {
-    public class Category : BaseEntity
-    { 
-        public string Name { get; set; }
-        public List<Subcategory> Subcategories { get; } = new List<Subcategory>();
-        public List<Product> Products { get; } = new List<Product>();
-    }
+    [Required]
+    [MaxLength(100)]
+    public string Name { get; set; }
+
+    public ICollection<Subcategory> Subcategories { get; set; }
 }

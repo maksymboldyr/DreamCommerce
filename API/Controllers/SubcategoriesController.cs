@@ -1,4 +1,5 @@
-﻿using BusinessLogic.DTO;
+﻿using API.Models;
+using BusinessLogic.DTO;
 using BusinessLogic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,13 +16,14 @@ namespace API.Controllers
             _categoryService = categoryService;
         }
 
-        // GET: api/Subcategory
+        // GET: api/Subcategory/All
         [HttpGet]
-        public async Task<IActionResult> GetSubcategories([FromQuery] string name = "", [FromQuery] int page = 1, [FromQuery] int pagesize = 10)
+        [Route("All")]
+        public async Task<ActionResult<IEnumerable<SubcategoryDTO>>> GetSubcategories()
         {
             try
             {
-                var subcategories = await _categoryService.GetSubcategories(name, page, pagesize);
+                var subcategories = await _categoryService.GetSubcategories();
                 return Ok(subcategories);
             }
             catch (Exception ex)
@@ -29,6 +31,27 @@ namespace API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+        // GET: api/Subcategory
+        [HttpGet]
+        public async Task<ActionResult<TableViewModel<SubcategoryDTO>>> GetSubcategories([FromQuery] string filter = "", [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "Name", [FromQuery] string sortOrder = "asc")
+        {
+            try
+            {
+                var subcategories = await _categoryService.GetSubcategoriesWithCount(filter, page, pageSize, sortField, sortOrder);
+                var tableViewModel = new TableViewModel<SubcategoryDTO>
+                {
+                    Data = subcategories.Item1,
+                    TotalCount = subcategories.Item2,
+                };
+                return Ok(tableViewModel);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
 
         // GET: api/Subcategory/{id}
         [HttpGet("{id}")]

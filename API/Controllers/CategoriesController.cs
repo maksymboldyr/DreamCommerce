@@ -1,4 +1,5 @@
-﻿using BusinessLogic.DTO;
+﻿using API.Models;
+using BusinessLogic.DTO;
 using BusinessLogic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -15,13 +16,14 @@ namespace API.Controllers
             _categoryService = categoryService;
         }
 
-        // GET: api/Category
+        // GET: api/Categories
         [HttpGet]
-        public async Task<IActionResult> GetCategories([FromQuery] string name = "", [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        [Route("All")]
+        public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetCategories()
         {
             try
             {
-                var categories = await _categoryService.GetCategories(name, page, pageSize);
+                var categories = await _categoryService.GetCategories();
                 return Ok(categories);
             }
             catch (Exception ex)
@@ -30,7 +32,27 @@ namespace API.Controllers
             }
         }
 
-        // GET: api/Category/{id}
+        // GET: api/Categories
+        [HttpGet]
+        public async Task<ActionResult<TableViewModel<CategoryDTO>>> GetCategories([FromQuery] string filter = "", [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "Name", [FromQuery] string sortOrder = "asc")
+        {
+            try
+            {
+                var categories = await _categoryService.GetCategoriesWithCount(filter, page, pageSize, sortField, sortOrder);
+                var tableViewModel = new TableViewModel<CategoryDTO>
+                {
+                    Data = categories.Item1,
+                    TotalCount = categories.Item2,
+                };
+                return Ok(tableViewModel);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
+        // GET: api/Categories/{id}
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCategory(string id)
         {
@@ -51,13 +73,13 @@ namespace API.Controllers
             }
         }
 
-        // POST: api/Category
+        // POST: api/Categories
         [HttpPost]
-        public async Task<IActionResult> CreateCategory([FromBody] string name)
+        public async Task<IActionResult> CreateCategory([FromBody] CategoryDTO categoryDTO)
         {
             try
             {
-                await _categoryService.CreateCategory(name);
+                await _categoryService.CreateCategory(categoryDTO);
                 return StatusCode(201, "Category created successfully.");
             }
             catch (Exception ex)
@@ -66,7 +88,7 @@ namespace API.Controllers
             }
         }
 
-        // PUT: api/Category
+        // PUT: api/Categories
         [HttpPut]
         public async Task<IActionResult> UpdateCategory([FromBody] CategoryDTO categoryModel)
         {
@@ -81,7 +103,7 @@ namespace API.Controllers
             }
         }
 
-        // DELETE: api/Category/{id}
+        // DELETE: api/Categories/{id}
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(string id)
         {
@@ -95,5 +117,7 @@ namespace API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        
+        
     }
 }

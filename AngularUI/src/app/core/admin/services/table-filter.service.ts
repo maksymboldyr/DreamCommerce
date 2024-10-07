@@ -10,10 +10,12 @@ export class TableFilterService {
   filters: Filter[] = [];
   page: number = 1;
   pageSize: number = 10;
-  sortField: string | string[] = 'email';
-  sortOrder: number = 1;
+  sortField: string | string[] = '';
+  sortOrder: number|undefined;
 
-  constructor() {}
+  constructor() {
+
+  }
 
   get filtersString() {
     //remove filters with empty array as value
