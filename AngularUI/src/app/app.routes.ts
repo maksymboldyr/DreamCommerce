@@ -8,7 +8,9 @@ import { UserManagementComponent } from './core/admin/components/user-management
 import { CategoriesComponent } from './core/admin/components/categories/categories.component';
 import { SubcategoriesComponent } from './core/admin/components/subcategories/subcategories.component';
 import { ProductsComponent } from './core/admin/components/products/products.component';
-
+import { CataloguePageComponent } from './core/catalogue/components/catalogue-page/catalogue-page.component';
+import { CatalogueComponent } from './core/catalogue/components/catalogue/catalogue.component';
+import { CatalogueProductComponent } from './core/catalogue/components/catalogue-product/catalogue-product.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -26,5 +28,14 @@ export const routes: Routes = [
             { path: 'subcategories', component: SubcategoriesComponent },
             { path: 'products', component: ProductsComponent }
         ],
+    },
+    { 
+        path: 'catalogue', 
+        component: CataloguePageComponent,
+        data: { breadcrumb: { icon: 'pi pi-home' } },
+        children: [
+            { path: ':subcategoryName', component: CatalogueComponent },
+            { path: ':subcategoryName/product/:productId', component: CatalogueProductComponent }
+        ]
     },
 ];

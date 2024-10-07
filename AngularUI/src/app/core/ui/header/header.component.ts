@@ -15,6 +15,7 @@ import { StyleClassModule } from 'primeng/styleclass';
 import { OverlayModule } from 'primeng/overlay';
 import { AuthService } from '../../auth/services/auth.service';
 import { map } from 'rxjs';
+import { CatalogueService } from '../../catalogue/services/catalogue.service';
 
 @Component({
   selector: 'app-header',
@@ -45,14 +46,37 @@ export class HeaderComponent implements OnInit {
   overlayVisible: boolean = false;
   headerVisible: boolean = true;
   auth = inject(AuthService);
+  catalogueService = inject(CatalogueService);
 
   get isAuthenticated() {
     return this.auth.accessToken !== null && this.auth.accessToken !== '';
   }
 
   ngOnInit() {
+    this.loadItems();
+  }
+
+  loadItems() {
     this.avatarItems = [
-      
+      {
+        label: 'Admin Panel',
+        icon: 'pi pi-cog',
+        routerLink: '/admin',
+        visible: this.auth.hasRole('Admin')
+      },
+      {
+        label: 'Sign In',
+        icon: 'pi pi-sign-in',
+        routerLink: '/login',
+        visible: !this.isAuthenticated
+      },
+      {
+        label: 'Sign Out',
+        icon: 'pi pi-sign-out',
+        routerLink: '/home',
+        command: () => this.logout(),
+        visible: this.isAuthenticated
+      }
     ];
 
     this.items = [
@@ -61,19 +85,26 @@ export class HeaderComponent implements OnInit {
         icon: 'pi pi-home',
         route: '',
       },
-      {
-        label: 'Contact',
-        icon: 'pi pi-envelope',
-        badge: '3',
-      },
     ];
   }
 
-  logout() {
-    return this.auth.logout();
+  loadCatalogueItems() {
+    this.catalogueService.getCatalogueMenuItems().subscribe(items => {
+      this.catalogueItems = items;
+    });    
   }
 
-  toggle() {
+  logout() {
+    this.auth.logout();
+  }
+
+  toggleCatalogue() {
+    this.loadCatalogueItems();
     this.overlayVisible = !this.overlayVisible;
+  }
+
+  toggleAvatar() {
+    this.loadItems();
+    
   }
 }

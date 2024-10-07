@@ -24,8 +24,12 @@ public class ProductService(
 
     public async Task<ProductDTO> GetProductById(string id)
     {
+        //get product by id with subcategory. joining manually
         var product = await unitOfWork.ProductRepository.GetByIdAsync(id);
-        return product.Adapt<ProductDTO>();
+        var productDto = product.Adapt<ProductDTO>();
+        var subcategory = await unitOfWork.SubcategoryRepository.GetByIdAsync(product.SubcategoryId);
+        productDto.SubcategoryName = subcategory.Name;
+        return productDto;
     }
 
     public async Task<IEnumerable<ProductDTO>> GetProducts()

@@ -77,6 +77,17 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.WebRootPath, "images")),
+    RequestPath = "/images",
+    OnPrepareResponse = ctx =>
+    {
+        ctx.Context.Response.Headers.Append("Cache-Control", "public,max-age=3600");
+    },
+});
+
 app.UseCors("AllowAll");
 
 // Configure the HTTP request pipeline.
@@ -88,14 +99,12 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseStaticFiles();
-
-app.MapPost("/validate-access-token", () => Results.Ok()).RequireAuthorization();
-
 app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+
 
 app.MapControllers();
 

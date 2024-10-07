@@ -11,11 +11,13 @@ namespace API.Controllers
     {
         private readonly IProductService _productService;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly string rootPath;
 
         public ProductsController(IProductService productService, IWebHostEnvironment webHostEnvironment)
         {
             _productService = productService;
             _webHostEnvironment = webHostEnvironment;
+            rootPath = _webHostEnvironment.WebRootPath;
         }
 
         // GET: api/Products
@@ -56,6 +58,15 @@ namespace API.Controllers
                     return NotFound();
                 }
 
+                //Chcek if image is exist at the path
+                string fullPath = Path.Combine(rootPath, product.ImageUrl);
+                if (!System.IO.File.Exists(fullPath))
+                {
+                    product.ImageUrl = @"images/NotFound.png";
+                }
+
+
+
                 return Ok(product);
             }
             catch (Exception ex)
@@ -86,7 +97,6 @@ namespace API.Controllers
         {
             try
             {
-                string wwwRootPath = _webHostEnvironment.WebRootPath;
                 var product = await _productService.GetProductById(model.ProductId);
 
                 // Check if product is found
@@ -100,8 +110,8 @@ namespace API.Controllers
                 {
                     string fileName = Guid.NewGuid().ToString() + Path.GetExtension(model.Image.FileName);
                     string imageUrl = Path.Combine(@"images\product", fileName);
-                    string productPath = Path.Combine(wwwRootPath, @"images\product");
-                    string fullPath = Path.Combine(wwwRootPath, imageUrl);
+                    string productPath = Path.Combine(rootPath, @"images\product");
+                    string fullPath = Path.Combine(rootPath, imageUrl);
 
                     if (!Directory.Exists(productPath))
                     {
