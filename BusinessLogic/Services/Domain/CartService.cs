@@ -11,21 +11,25 @@ using BusinessLogic.Interfaces;
 
 namespace BusinessLogic.Services.Domain
 {
-    public class CartService(UnitOfWork unitOfWork) : ICartService
+    public class CartService : ICartService
     {
+        private readonly UnitOfWork unitOfWork;
+
+        public CartService(UnitOfWork unitOfWork)
+        {
+            this.unitOfWork = unitOfWork;
+        }
+
         public async Task<CartDto> GetUserCartAsync(string userId)
         {
-            var cartEnumerable = await unitOfWork.CartRepository.GetAsync(c => c.UserId == userId);
+            var cartEnumerable = await unitOfWork.CartRepository.GetAsync(
+                c => c.UserId == userId
+            );
             var cart = cartEnumerable.FirstOrDefault();
-            var cartItems = await unitOfWork.CartItemRepository.GetAsync(ci => ci.Cart.UserId == userId, includeProperties: "Product");
             if (cart == null)
             {
                 return null;
             }
-
-            cart.CartItems = cartItems.ToList();
-            cart.UserId = userId;
-
 
             var cartDto = new CartDto
             {
@@ -45,7 +49,7 @@ namespace BusinessLogic.Services.Domain
 
         public async Task AddProductToCartAsync(EditProductInCartDto productInCartDto)
         {
-            var existingCart = unitOfWork.CartRepository.GetAsync(c => c.UserId == productInCartDto.UserId, includeProperties: "CartItems").Result.FirstOrDefault();
+            var existingCart = (await unitOfWork.CartRepository.GetAsync(c => c.UserId == productInCartDto.UserId)).FirstOrDefault();
 
             if (existingCart == null)
             {
@@ -84,15 +88,12 @@ namespace BusinessLogic.Services.Domain
                 }
 
                 unitOfWork.CartRepository.Update(existingCart);
-
-
             }
         }
 
         public async Task RemoveProductFromCartAsync(EditProductInCartDto productInCartDto)
         {
-
-            var existingCarts = await unitOfWork.CartRepository.GetAsync(c => c.UserId == productInCartDto.UserId, includeProperties: "CartItems");
+            var existingCarts = await unitOfWork.CartRepository.GetAsync(c => c.UserId == productInCartDto.UserId);
             var existingCart = existingCarts.FirstOrDefault();
 
             if (existingCart == null)
@@ -121,7 +122,7 @@ namespace BusinessLogic.Services.Domain
 
         public async Task ClearCartAsync(string userId)
         {
-            var carts = await unitOfWork.CartRepository.GetAsync(c => c.UserId == userId, includeProperties: "CartItems");
+            var carts = await unitOfWork.CartRepository.GetAsync(c => c.UserId == userId);
             var cart = carts.FirstOrDefault();
             if (cart == null)
             {
@@ -134,10 +135,11 @@ namespace BusinessLogic.Services.Domain
 
         public async Task RemoveItemFromCartAsync(EditProductInCartDto productInCartDto)
         {
-            var existingCarts = await unitOfWork.CartRepository.GetAsync(c => c.UserId == productInCartDto.UserId, includeProperties: "CartItems");
+            var existingCarts = await unitOfWork.CartRepository.GetAsync(c => c.UserId == productInCartDto.UserId);
             var existingCart = existingCarts.FirstOrDefault();
 
-            if (existingCart == null) { 
+            if (existingCart == null)
+            {
                 return;
             }
 

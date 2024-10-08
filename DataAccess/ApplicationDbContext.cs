@@ -107,6 +107,14 @@ namespace DataAccess
                 .WithMany(c => c.CartItems)
                 .HasForeignKey(ci => ci.CartId);
 
+            modelBuilder.Entity<Cart>()
+            .Navigation(c => c.CartItems)
+            .AutoInclude();
+
+            modelBuilder.Entity<CartItem>()
+                .Navigation(ci => ci.Product)
+                .AutoInclude();
+
             // Extension method to seed the database from DBSeeder class
             modelBuilder.SeedDatabase();
         }
