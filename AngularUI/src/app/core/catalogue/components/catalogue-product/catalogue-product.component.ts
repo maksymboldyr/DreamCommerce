@@ -9,6 +9,7 @@ import { TagModule } from 'primeng/tag';
 import { RatingModule } from 'primeng/rating';
 import { CardModule } from 'primeng/card';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
+import { CartService } from '../../../cart/services/cart.service';
 
 @Component({
   selector: 'app-catalogue-product',
@@ -21,6 +22,7 @@ export class CatalogueProductComponent implements OnInit {
   product: ProductDto;
   rootUrl: string = environment.root;
   catalogueService = inject(CatalogueService);
+  cartService = inject(CartService);
   route = inject(ActivatedRoute);
   subcategoryName: string = '';
 
@@ -56,5 +58,12 @@ export class CatalogueProductComponent implements OnInit {
 
   getImageUrl(product: ProductDto): string {
     return this.rootUrl + product.imageUrl;
+  }
+
+  addToCart() {
+    if (!this.product.id) {
+      return;
+    }
+    this.cartService.addToCart(this.product.id);
   }
 }

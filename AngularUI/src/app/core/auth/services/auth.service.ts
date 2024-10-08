@@ -32,6 +32,14 @@ export class AuthService {
     return tokenGetter();
   }
 
+  get currentUserId() {
+    if (!this.accessToken || this.accessToken === '') {
+      return '';
+    }
+    this.decodedUserToken = jwtDecode<DecodedUserToken>(this.accessToken);
+    return this.decodedUserToken.id;
+  }
+
   hasRole(role: string) : boolean {
     if (!this.accessToken || this.accessToken === '') {
       return false;
@@ -112,7 +120,6 @@ export class AuthService {
         return value;
       }
     }
-
     return null;
   }
 

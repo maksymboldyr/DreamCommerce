@@ -116,10 +116,7 @@ export class ProductsComponent {
         this.products = response.data;
         this.totalRecords = response.totalCount;
         this.loading = false;
-      });
-
-      console.log(this.products);
-      
+      });      
   }
 
   getCategories() {
@@ -204,8 +201,6 @@ export class ProductsComponent {
   }
 
   onUpload($event: FileUploadHandlerEvent) {
-    console.log($event);
-
     const file = $event.files[0];
 
     if (!file || !this.imageProduct?.id) {

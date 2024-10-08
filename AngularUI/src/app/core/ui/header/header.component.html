@@ -1,5 +1,5 @@
-<div class="card" >
-    <p-menubar [model]="items" styleClass="px-5">
+<div class="card">
+    <p-menubar [model]="items">
         <ng-template pTemplate="start">
             <p-button (onClick)="toggleCatalogue()" icon="pi pi-th-large" label="Catalogue" [rounded]="true" [outlined]="true"></p-button>
             <p-overlay [(visible)]="overlayVisible">
@@ -17,8 +17,10 @@
         </ng-template>
         <ng-template pTemplate="end">
             <div class="flex align-items-center gap-2">
+                <input type="text" pInputText placeholder="Search" class="w-8rem sm:w-auto" />
                 <p-menu #menu [model]="avatarItems" [popup]="true"></p-menu>
                 <p-button (onClick)="menu.toggle($event)" (onClick)="loadItems()" icon="pi pi-user" [rounded]="true" severity="info" [outlined]="true"/>                
+                <p-button [routerLink]="'/cart'" pButton icon="pi pi-shopping-cart" [rounded]="true" severity="info" [outlined]="true"></p-button>
             </div>
         </ng-template>
     </p-menubar>

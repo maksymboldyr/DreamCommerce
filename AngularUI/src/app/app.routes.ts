@@ -11,6 +11,7 @@ import { ProductsComponent } from './core/admin/components/products/products.com
 import { CataloguePageComponent } from './core/catalogue/components/catalogue-page/catalogue-page.component';
 import { CatalogueComponent } from './core/catalogue/components/catalogue/catalogue.component';
 import { CatalogueProductComponent } from './core/catalogue/components/catalogue-product/catalogue-product.component';
+import { CartComponent } from './core/cart/components/cart/cart.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -38,4 +39,5 @@ export const routes: Routes = [
             { path: ':subcategoryName/product/:productId', component: CatalogueProductComponent }
         ]
     },
+    { path: 'cart', component: CartComponent },
 ];

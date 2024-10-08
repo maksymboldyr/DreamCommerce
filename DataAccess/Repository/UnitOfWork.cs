@@ -17,6 +17,7 @@ namespace DataAccess.Repository
         private IRepositoryBase<Tag>? tagRepository;
         private IRepositoryBase<TagValue>? tagValueRepository;
         private IRepositoryBase<Cart>? cartRepository;
+        private IRepositoryBase<CartItem>? cartItemRepository;
 
         public IRepositoryBase<Category> CategoryRepository
         {
@@ -56,6 +57,11 @@ namespace DataAccess.Repository
         public IRepositoryBase<Cart> CartRepository
         {
             get => cartRepository ??= new RepositoryBase<Cart>(context);
+        }
+
+        public IRepositoryBase<CartItem> CartItemRepository
+        {
+            get => cartItemRepository ??= new RepositoryBase<CartItem>(context);
         }
 
         private bool disposed = false;
