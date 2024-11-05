@@ -5,30 +5,93 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess
 {
+    /// <summary>
+    /// Class that represents the database context. Inherits from <see cref="IdentityDbContext"/> to use the Identity framework.
+    /// </summary>
     public class ApplicationDbContext : IdentityDbContext<User, Role, string>
     {
+        /// <summary>
+        /// Creates a new instance of the <see cref="ApplicationDbContext"></see> class.
+        /// </summary>
+        /// <param name="options"></param>
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
 
+        #region DbSet properties
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{TEntity}"/> of <see cref="User"/> entities.
+        /// </summary>
         public DbSet<User> Users { get; set; }
-        public DbSet<Product> Products { get; set; }
-        public DbSet<Subcategory> Subcategories { get; set; }
-        public DbSet<Tag> Tags { get; set; }
-        public DbSet<TagValue> TagValues { get; set; }
-        public DbSet<ProductTag> ProductsTags { get; set; }
-        public DbSet<Order> Orders { get; set; }
-        public DbSet<OrderDetail> OrderDetails { get; set; }
-        public DbSet<Shop> Shop { get; set; }
-        public DbSet<Address> Addresses { get; set; }
-        public DbSet<Cart> Carts { get; set; }
-        public DbSet<CartItem> CartItems { get; set; }
 
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{TEntity}"/> of <see cref="Role"/> entities.
+        /// </summary>
+        public DbSet<Product> Products { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{TEntity}"/> of <see cref="Category"/> entities.
+        /// </summary>
+        public DbSet<Subcategory> Subcategories { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{TEntity}"/> of <see cref="Tag"/> entities.
+        /// </summary>
+        public DbSet<Tag> Tags { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{TEntity}"/> of <see cref="TagValue"/> entities.
+        /// </summary>
+        public DbSet<TagValue> TagValues { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{TEntity}"/> of <see cref="ProductTag"/> entities.
+        /// </summary>
+        public DbSet<ProductTag> ProductsTags { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{TEntity}"/> of <see cref="Order"/> entities.
+        /// </summary>
+        public DbSet<Order> Orders { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{TEntity}"/> of <see cref="OrderDetail"/> entities.
+        /// </summary>
+        public DbSet<OrderDetail> OrderDetails { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{TEntity}"/> of <see cref="Shop"/> entities.
+        /// </summary>
+        public DbSet<Shop> Shop { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{TEntity}"/> of <see cref="Address"/> entities.
+        /// </summary>
+        public DbSet<Address> Addresses { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{TEntity}"/> of <see cref="Cart"/> entities.
+        /// </summary>
+        public DbSet<Cart> Carts { get; set; }
+
+        /// <summary>
+        /// Gets or sets the <see cref="DbSet{TEntity}"/> of <see cref="CartItem"/> entities.
+        /// </summary>
+        public DbSet<CartItem> CartItems { get; set; }
+        #endregion
+
+        /// <summary>
+        /// Method that is called when the model for a derived context has been initialized, 
+        /// but before the model has been locked down and used to initialize the context.
+        /// Sets the relationships between the entities and uses the <see cref="DBSeeder.SeedDatabase(ModelBuilder)"/> extension method to seed the database.
+        /// </summary>
+        /// <seealso cref="DBSeeder"/>
+        /// <param name="modelBuilder"></param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            // both shop and user can have an address
+            #region relationships configuration
             modelBuilder.Entity<Shop>()
                 .HasOne(s => s.Address)
                 .WithMany()
@@ -119,8 +182,8 @@ namespace DataAccess
             modelBuilder.Entity<CartItem>()
                 .Navigation(ci => ci.Product)
                 .AutoInclude();
+            #endregion
 
-            // Extension method to seed the database from DBSeeder class
             modelBuilder.SeedDatabase();
         }
     }

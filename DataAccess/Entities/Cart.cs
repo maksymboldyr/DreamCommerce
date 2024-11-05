@@ -6,13 +6,26 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccess.Entities
+namespace DataAccess.Entities;
+
+/// <summary>
+/// Represents a cart entity.
+/// </summary>
+public class Cart: BaseEntity
 {
-    public class Cart: BaseEntity
-    {
-        [ForeignKey("User")]
-        public string UserId { get; set; }
-        public User User { get; set; }
-        public List<CartItem> CartItems { get; set; } = new List<CartItem>();
-    }
+    /// <summary>
+    /// Foreign key to the <seealso cref="User"/> entity.
+    /// </summary>
+    [ForeignKey("User")]
+    public string UserId { get; set; }
+
+    /// <summary>
+    /// Navigation property to the <seealso cref="Entities.Users.User"/> entity.
+    /// </summary>
+    public User User { get; set; }
+
+    /// <summary>
+    /// Navigation property to related <seealso cref="CartItem"/> entities.
+    /// </summary>
+    public List<CartItem> CartItems { get; set; } = new List<CartItem>();
 }

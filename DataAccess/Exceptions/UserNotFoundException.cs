@@ -4,11 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DataAccess.Exceptions
+namespace DataAccess.Exceptions;
+
+/// <summary>
+/// Exception thrown when a user is not found.
+/// </summary>
+public class UserNotFoundException : Exception
 {
-    public class UserNotFoundException : Exception
-    {
-        public UserNotFoundException(string id)
-            : base($"User with ID '{id}' not found.") { }
-    }
+    /// <summary>
+    /// Initializes a new instance of the <seealso cref="UserNotFoundException"/> class.
+    /// </summary>
+    /// <param name="id"></param>
+    public UserNotFoundException(string id)
+        : base($"User with ID '{id}' not found.") { }
 }

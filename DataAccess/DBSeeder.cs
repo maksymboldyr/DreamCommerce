@@ -5,8 +5,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataAccess
 {
+    /// <summary>
+    /// Class containing methods to seed the database with initial data.
+    /// </summary>
     public static class DBSeeder
     {
+        /// <summary>
+        /// Seeds the database with initial data. Calls other methods to seed users with roles, categories and subcategories.
+        /// </summary>
+        /// <param name="builder"></param>
         public static void SeedDatabase(this ModelBuilder builder)
         {
             SeedUsersWithRoles(builder);
@@ -14,6 +21,10 @@ namespace DataAccess
             SeedSubcategories(builder);
         }
 
+        /// <summary>
+        /// Seeds the database with users and roles.
+        /// </summary>
+        /// <param name="builder"></param>
         private static void SeedUsersWithRoles(ModelBuilder builder)
         {
             var adminRoleId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1b";
@@ -72,6 +83,10 @@ namespace DataAccess
             );
         }
         
+        /// <summary>
+        /// Seeds the database with product categories.
+        /// </summary>
+        /// <param name="builder"></param>
         private static void SeedCategories(ModelBuilder builder)
         {
             builder.Entity<Category>().HasData(
@@ -86,6 +101,10 @@ namespace DataAccess
             );
         }
 
+        /// <summary>
+        /// Seeds the database with product subcategories.
+        /// </summary>
+        /// <param name="builder"></param>
         private static void SeedSubcategories(ModelBuilder builder)
         {
             builder.Entity<Subcategory>().HasData(
