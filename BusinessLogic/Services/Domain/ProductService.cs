@@ -1,4 +1,4 @@
-﻿using BusinessLogic.DTO;
+﻿using BusinessLogic.DTO.Catalogue;
 using BusinessLogic.Interfaces;
 using DataAccess.Entities;
 using DataAccess.Repository;

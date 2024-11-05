@@ -12,6 +12,13 @@ import { CataloguePageComponent } from './core/catalogue/components/catalogue-pa
 import { CatalogueComponent } from './core/catalogue/components/catalogue/catalogue.component';
 import { CatalogueProductComponent } from './core/catalogue/components/catalogue-product/catalogue-product.component';
 import { CartComponent } from './core/cart/components/cart/cart.component';
+import { CheckoutComponent } from './core/cart/components/checkout/checkout.component';
+import { AccountComponent } from './core/account/components/account/account.component';
+import { ProfileComponent } from './core/account/components/profile/profile.component';
+import { CheckoutConfirmComponent } from './core/cart/components/checkout-confirm/checkout-confirm.component';
+import { UserOrdersComponent } from './core/account/components/user-orders/user-orders.component';
+import { UserOrderDetailsComponent } from './core/account/components/user-order-details/user-order-details.component';
+import { OrdersComponent } from './core/admin/components/orders/orders.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -27,7 +34,8 @@ export const routes: Routes = [
             { path: 'users', component: UserManagementComponent },
             { path: 'categories', component: CategoriesComponent },
             { path: 'subcategories', component: SubcategoriesComponent },
-            { path: 'products', component: ProductsComponent }
+            { path: 'products', component: ProductsComponent },
+            { path: 'orders', component: OrdersComponent },
         ],
     },
     { 
@@ -40,4 +48,15 @@ export const routes: Routes = [
         ]
     },
     { path: 'cart', component: CartComponent },
+    { path: 'checkout', component: CheckoutComponent },
+    { path: 'checkout-confirm', component: CheckoutConfirmComponent },
+    { 
+        path: 'account', 
+        component: AccountComponent,
+        children: [
+            { path: 'profile', component: ProfileComponent },
+            { path: 'order-history', component: UserOrdersComponent },
+            { path: 'order-details/:orderId', component: UserOrderDetailsComponent }
+        ]
+    }
 ];

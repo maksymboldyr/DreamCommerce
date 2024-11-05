@@ -3,6 +3,7 @@ using BusinessLogic.Interfaces;
 using BusinessLogic.DTO;
 using Microsoft.AspNetCore.Authorization;
 using API.Models;
+using BusinessLogic.DTO.Auth;
 
 namespace API.Controllers
 {
@@ -61,6 +62,22 @@ namespace API.Controllers
                 }
                 return BadRequest("User already exists");
 
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("get-user-data/{id}")]
+        public async Task<IActionResult> GetUserData(string id)
+        {
+            try
+            {
+                var user = await _userService.GetUserDataByIdAsync(id);
+                return Ok(user);
             }
             catch (Exception ex)
             {

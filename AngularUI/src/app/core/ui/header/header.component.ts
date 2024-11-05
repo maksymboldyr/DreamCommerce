@@ -65,6 +65,12 @@ export class HeaderComponent implements OnInit {
         visible: this.auth.hasRole('Admin')
       },
       {
+        label: 'Account',
+        icon: 'pi pi-user',
+        routerLink: '/account',
+        visible: this.isAuthenticated
+      },
+      {
         label: 'Sign In',
         icon: 'pi pi-sign-in',
         routerLink: '/login',

@@ -10,7 +10,7 @@ namespace DataAccess.Interfaces
             string includeProperties = "");
 
         Task<T> GetByIdAsync(string id);
-        Task InsertAsync(T entity);
+        Task<string> InsertAsync(T entity);
         void Update(T entity);
         Task DeleteAsync(string id);
     }

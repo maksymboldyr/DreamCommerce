@@ -1,5 +1,5 @@
 ﻿using API.Models;
-using BusinessLogic.DTO;
+using BusinessLogic.DTO.Catalogue;
 using BusinessLogic.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

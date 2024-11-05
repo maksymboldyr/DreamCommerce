@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Mapster;
 using DataAccess.Entities;
 using BusinessLogic.Interfaces;
+using BusinessLogic.DTO.Catalogue;
 
 namespace BusinessLogic.Services.Domain
 {
@@ -129,7 +130,13 @@ namespace BusinessLogic.Services.Domain
                 return;
             }
 
+            foreach (var cartItem in cart.CartItems)
+            {
+                await unitOfWork.CartItemRepository.DeleteAsync(cartItem.Id);
+            }
+
             cart.CartItems.Clear();
+
             unitOfWork.CartRepository.Update(cart);
         }
 

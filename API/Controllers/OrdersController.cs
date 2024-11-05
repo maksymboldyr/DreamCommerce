@@ -1,51 +1,38 @@
-﻿using BusinessLogic.DTO;
+﻿using API.Models;
+using BusinessLogic.DTO;
 using BusinessLogic.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class OrdersController(IOrderService orderService) : ControllerBase
+    public class OrdersController : ControllerBase
     {
+        private readonly IOrderService orderService;
+        private readonly ICartService cartService;
+
+        public OrdersController(IOrderService orderService, ICartService cartService)
+        {
+            this.orderService = orderService;
+            this.cartService = cartService;
+        }
+
         // GET: api/Orders
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<OrderDTO>>> GetOrders([FromQuery] string filter = "", [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "Id", [FromQuery] string sortOrder = "asc")
+        public async Task<ActionResult<TableViewModel<OrderDTO>>> GetProductsWithCount([FromQuery] string filter = "", [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "Id", [FromQuery] string sortOrder = "asc")
         {
             try
             {
-                var orders = await orderService.GetOrders(filter, page, pageSize, sortField, sortOrder);
-                return Ok(orders);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
-        [HttpGet]
-        [Route("details")]
-        public async Task<ActionResult<IEnumerable<OrderDTO>>> GetOrdersWithDetails([FromQuery] string filter = "", [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "Id", [FromQuery] string sortOrder = "asc")
-        {
-            try
-            {
-                var orders = await orderService.GetOrders(filter, page, pageSize, sortField, sortOrder);
-                return Ok(orders);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
-        // GET: api/Orders/user/{userId}
-        [HttpGet("user/{userId}")]
-        public async Task<ActionResult<IEnumerable<OrderDTO>>> GetOrdersByUserId(string userId, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
-        {
-            try
-            {
-                var orders = await orderService.GetOrdersByUserId(userId, page, pageSize);
-                return Ok(orders);
+                var (orders, count) = await orderService.GetOrdersWithCount(filter, page, pageSize, sortField, sortOrder);
+                var tableViewModel = new TableViewModel<OrderDTO>
+                {
+                    Data = orders,
+                    TotalCount = count
+                };
+                return Ok(tableViewModel);
             }
             catch (Exception ex)
             {
@@ -59,7 +46,7 @@ namespace API.Controllers
         {
             try
             {
-                var order = await orderService.GetOrderById(id);
+                var order = await orderService.GetOrderWithDetailsById(id);
 
                 if (order == null)
                 {
@@ -74,19 +61,14 @@ namespace API.Controllers
             }
         }
 
-        [HttpGet("with_details/{id}")]
-        public async Task<ActionResult<OrderDTO>> GetOrderByIdWithDetails(string id)
+        //GET: api/Orders/User/{userId}
+        [HttpGet("User/{userId}")]
+        public async Task<ActionResult<IEnumerable<OrderDTO>>> GetOrdersByUserId(string userId)
         {
             try
             {
-                var order = await orderService.GetOrderByIdWithDetails(id);
-
-                if (order == null)
-                {
-                    return NotFound();
-                }
-
-                return Ok(order);
+                var orders = await orderService.GetOrdersByUserId(userId);
+                return Ok(orders);
             }
             catch (Exception ex)
             {
@@ -100,7 +82,8 @@ namespace API.Controllers
         {
             try
             {
-                await orderService.CreateOrder(order);
+                await orderService.PlaceOrderAsync(order);
+                await cartService.ClearCartAsync(order.UserId);
                 return StatusCode(201, "Order created successfully");
             }
             catch (Exception ex)
@@ -109,44 +92,14 @@ namespace API.Controllers
             }
         }
 
-        // POST: api/Orders/OrderDetails
-        [HttpPost("OrderDetails")]
-        public async Task<ActionResult> CreateOrderDetail([FromBody] OrderDetailDTO orderDetail)
+        // PUT: api/Orders/status/{id}
+        [HttpPut("status")]
+        public async Task<ActionResult> ChangeOrderStatus([FromBody] OrderStatusDto orderStatusDto)
         {
             try
             {
-                await orderService.CreateOrderDetail(orderDetail);
-                return StatusCode(201, "Order detail created successfully");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
-        // PUT: api/Orders/{id}
-        [HttpPut]
-        public async Task<ActionResult> UpdateOrder([FromBody] OrderDTO order)
-        {
-            try
-            {
-                orderService.UpdateOrder(order);
-                return StatusCode(200, "Order updated successfully");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
-        // PUT: api/Orders/OrderDetails/{id}
-        [HttpPut("OrderDetails")]
-        public async Task<ActionResult> UpdateOrderDetail([FromBody] OrderDetailDTO orderDetail)
-        {
-            try
-            {
-                orderService.UpdateOrderDetail(orderDetail);
-                return StatusCode(200, "Order detail updated successfully");
+                await orderService.ChangeStatus(orderStatusDto.Id, orderStatusDto.Name);
+                return StatusCode(200, "Order status updated successfully");
             }
             catch (Exception ex)
             {
@@ -168,21 +121,5 @@ namespace API.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-
-        // DELETE: api/Orders/OrderDetails/{id}
-        [HttpDelete("OrderDetails/{id}")]
-        public async Task<ActionResult> DeleteOrderDetail(string id)
-        {
-            try
-            {
-                await orderService.DeleteOrderDetail(id);
-                return StatusCode(200, "Order detail deleted successfully");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
-
     }
 }

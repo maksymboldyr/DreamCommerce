@@ -23,6 +23,14 @@ namespace DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Apartment")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Building")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("City")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -33,18 +41,6 @@ namespace DataAccess.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("State")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
 
                     b.Property<string>("Street")
                         .IsRequired()
@@ -143,49 +139,49 @@ namespace DataAccess.Migrations
                         new
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1d",
-                            CreatedAt = new DateTime(2024, 10, 7, 14, 37, 12, 889, DateTimeKind.Utc).AddTicks(5804),
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3908),
                             Name = "Electronics"
                         },
                         new
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1e",
-                            CreatedAt = new DateTime(2024, 10, 7, 14, 37, 12, 889, DateTimeKind.Utc).AddTicks(5810),
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3914),
                             Name = "Clothing"
                         },
                         new
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1f",
-                            CreatedAt = new DateTime(2024, 10, 7, 14, 37, 12, 889, DateTimeKind.Utc).AddTicks(5811),
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3915),
                             Name = "Books"
                         },
                         new
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1g",
-                            CreatedAt = new DateTime(2024, 10, 7, 14, 37, 12, 889, DateTimeKind.Utc).AddTicks(5812),
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3916),
                             Name = "Furniture"
                         },
                         new
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1h",
-                            CreatedAt = new DateTime(2024, 10, 7, 14, 37, 12, 889, DateTimeKind.Utc).AddTicks(5813),
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3916),
                             Name = "Toys"
                         },
                         new
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1i",
-                            CreatedAt = new DateTime(2024, 10, 7, 14, 37, 12, 889, DateTimeKind.Utc).AddTicks(5813),
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3917),
                             Name = "Tools"
                         },
                         new
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1j",
-                            CreatedAt = new DateTime(2024, 10, 7, 14, 37, 12, 889, DateTimeKind.Utc).AddTicks(5814),
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3918),
                             Name = "Sports"
                         },
                         new
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1k",
-                            CreatedAt = new DateTime(2024, 10, 7, 14, 37, 12, 889, DateTimeKind.Utc).AddTicks(5815),
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3919),
                             Name = "Music"
                         });
                 });
@@ -196,11 +192,12 @@ namespace DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("AddressId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("TEXT");
 
                     b.Property<int>("Status")
                         .HasColumnType("INTEGER");
@@ -216,6 +213,8 @@ namespace DataAccess.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
 
                     b.HasIndex("UserId");
 
@@ -398,112 +397,112 @@ namespace DataAccess.Migrations
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1l",
                             CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1d",
-                            CreatedAt = new DateTime(2024, 10, 7, 14, 37, 12, 889, DateTimeKind.Utc).AddTicks(5876),
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3963),
                             Name = "Smartphones"
                         },
                         new
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1m",
                             CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1d",
-                            CreatedAt = new DateTime(2024, 10, 7, 14, 37, 12, 889, DateTimeKind.Utc).AddTicks(5877),
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3964),
                             Name = "Laptops"
                         },
                         new
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1n",
                             CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1e",
-                            CreatedAt = new DateTime(2024, 10, 7, 14, 37, 12, 889, DateTimeKind.Utc).AddTicks(5878),
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3965),
                             Name = "T-Shirts"
                         },
                         new
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1o",
                             CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1e",
-                            CreatedAt = new DateTime(2024, 10, 7, 14, 37, 12, 889, DateTimeKind.Utc).AddTicks(5973),
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3966),
                             Name = "Jeans"
                         },
                         new
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1p",
                             CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1f",
-                            CreatedAt = new DateTime(2024, 10, 7, 14, 37, 12, 889, DateTimeKind.Utc).AddTicks(5974),
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3967),
                             Name = "Fantasy"
                         },
                         new
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1q",
                             CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1f",
-                            CreatedAt = new DateTime(2024, 10, 7, 14, 37, 12, 889, DateTimeKind.Utc).AddTicks(5975),
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3968),
                             Name = "Science Fiction"
                         },
                         new
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1r",
                             CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1g",
-                            CreatedAt = new DateTime(2024, 10, 7, 14, 37, 12, 889, DateTimeKind.Utc).AddTicks(5976),
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3969),
                             Name = "Sofas"
                         },
                         new
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1s",
                             CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1g",
-                            CreatedAt = new DateTime(2024, 10, 7, 14, 37, 12, 889, DateTimeKind.Utc).AddTicks(5976),
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3969),
                             Name = "Beds"
                         },
                         new
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1t",
                             CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1h",
-                            CreatedAt = new DateTime(2024, 10, 7, 14, 37, 12, 889, DateTimeKind.Utc).AddTicks(5977),
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3970),
                             Name = "Cars"
                         },
                         new
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1u",
                             CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1h",
-                            CreatedAt = new DateTime(2024, 10, 7, 14, 37, 12, 889, DateTimeKind.Utc).AddTicks(5978),
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3971),
                             Name = "Dinosaurs"
                         },
                         new
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1v",
                             CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1i",
-                            CreatedAt = new DateTime(2024, 10, 7, 14, 37, 12, 889, DateTimeKind.Utc).AddTicks(5979),
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3972),
                             Name = "Drills"
                         },
                         new
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1w",
                             CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1i",
-                            CreatedAt = new DateTime(2024, 10, 7, 14, 37, 12, 889, DateTimeKind.Utc).AddTicks(5979),
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3972),
                             Name = "Screwdrivers"
                         },
                         new
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1x",
                             CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1j",
-                            CreatedAt = new DateTime(2024, 10, 7, 14, 37, 12, 889, DateTimeKind.Utc).AddTicks(5980),
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3973),
                             Name = "Football"
                         },
                         new
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1y",
                             CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1j",
-                            CreatedAt = new DateTime(2024, 10, 7, 14, 37, 12, 889, DateTimeKind.Utc).AddTicks(5981),
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3974),
                             Name = "Basketball"
                         },
                         new
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1z",
                             CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1k",
-                            CreatedAt = new DateTime(2024, 10, 7, 14, 37, 12, 889, DateTimeKind.Utc).AddTicks(5982),
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3975),
                             Name = "Guitars"
                         },
                         new
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e10",
                             CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1k",
-                            CreatedAt = new DateTime(2024, 10, 7, 14, 37, 12, 889, DateTimeKind.Utc).AddTicks(5982),
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3975),
                             Name = "Drums"
                         });
                 });
@@ -689,15 +688,15 @@ namespace DataAccess.Migrations
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1a",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "38252586-8ff5-44f6-906e-f9e0da0b94d0",
+                            ConcurrencyStamp = "b7ee8cc9-db8a-4f6d-9269-f8afa593511e",
                             Email = "admin@mail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@MAIL.COM",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAENeEgipNLpNt6NZdf90RHY8MfMUyPCkfF+QCvJP+t7VSadUXtq8ILOtzwvHQJ3TJtQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFKrtJfNM0B1t5gdoK3qLIZl6n+mH8zZN5txEhlxZJW6X3O723IZPY4tgXTPOtcn8w==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "816a53f4-99ae-4bfc-8420-9006e7620629",
+                            SecurityStamp = "202f8669-0a6c-480c-8337-841372097dd8",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         },
@@ -705,15 +704,15 @@ namespace DataAccess.Migrations
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1b",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "bb3f3da4-bccd-4157-9c1e-c780f752df23",
+                            ConcurrencyStamp = "9a78e399-f2f1-4ebb-98af-b3128185f68c",
                             Email = "shop@mail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "SHOP@MAIL.COM",
                             NormalizedUserName = "SHOP",
-                            PasswordHash = "AQAAAAIAAYagAAAAEOZbP3qE3/0pcOfIeOrIEy8O2U5I6CRTWqX9PloI33awMIvY+gH/pUHuKiX3BVKfiw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAECKNMwMm2GX22Zzi04s4C7hXnScG87qUO8u6ec5G3hYTZNilFchTVvSQSBChdB99fw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "effc6a9d-8d6a-4325-b085-c49869215ac6",
+                            SecurityStamp = "42dfcda7-1dc7-4dca-8cb5-01a1b429bede",
                             TwoFactorEnabled = false,
                             UserName = "shop"
                         },
@@ -721,15 +720,15 @@ namespace DataAccess.Migrations
                         {
                             Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1c",
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "44c51f12-be5a-4361-868d-fa5595241d0f",
+                            ConcurrencyStamp = "459dd0cd-9970-45a7-9c52-24ffb60e3743",
                             Email = "user@mail.com",
                             EmailConfirmed = true,
                             LockoutEnabled = false,
                             NormalizedEmail = "USER@MAIL.COM",
                             NormalizedUserName = "USER",
-                            PasswordHash = "AQAAAAIAAYagAAAAEMj63fr6Nz8es49LiRNPn567yoflNuZI37nig91kFLhrfKBsl8CENggPX2D2BJc/LQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEDNokO3LLY31Crg3IRilTEafZqOX2KQtHZ0yq5MAbObZJKbG50BIthoSdQOqHRrleQ==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "7611b3cc-e145-4d5d-a3bd-eda8c2f45215",
+                            SecurityStamp = "8503224b-aa97-4476-a180-a9976d50ba70",
                             TwoFactorEnabled = false,
                             UserName = "user"
                         });
@@ -881,11 +880,19 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("DataAccess.Entities.Order", b =>
                 {
+                    b.HasOne("DataAccess.Entities.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("DataAccess.Entities.Users.User", "User")
                         .WithMany("Orders")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Address");
 
                     b.Navigation("User");
                 });

@@ -6,9 +6,9 @@ import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { DataViewModule } from 'primeng/dataview';
 import { environment } from '../../../../../environments/environment.development';
-import { ProductDto } from '../../../admin/interfaces/product-dto';
 import { CartDto } from '../../interfaces/cart-dto';
 import { ScrollPanelModule } from 'primeng/scrollpanel';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-cart',
@@ -23,13 +23,13 @@ export class CartComponent implements OnInit {
   root: string = environment.root;
   cartEmptyString: string = 'Your cart is empty';
 
-  constructor(private cartService: CartService) {}
+  constructor(private cartService: CartService, private router: Router) {}
 
   ngOnInit() {
     this.getCart();
   }
 
- get total(): number {
+  get total(): number {
     if (!this.cart?.total) {
       return 0;
     }
@@ -71,7 +71,7 @@ export class CartComponent implements OnInit {
   }
 
   checkout() {
-    throw new Error('Not implemented');
+    this.router.navigate(['/checkout']);
   }
 
   getImageUrl(item: CartItemDto): string {

@@ -43,6 +43,16 @@ export class AdminPanelComponent {
           routerLink: 'products'
         }
       ]
+    },
+    {
+      label: 'Orders',
+      items: [
+        {
+          label: 'Orders',
+          icon: 'pi pi-fw pi-shopping-cart',
+          routerLink: 'orders'
+        }
+      ]
     }
   ];
 

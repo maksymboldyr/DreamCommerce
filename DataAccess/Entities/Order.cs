@@ -10,7 +10,7 @@ namespace DataAccess.Entities
         Confirmed,
         Shipped,
         Delivered,
-        Canceled,
+        Cancelled,
         Completed
     }
 
@@ -20,8 +20,9 @@ namespace DataAccess.Entities
         [ForeignKey("User")]
         public string UserId { get; set; }
 
-        [Required] // Date is required
-        public DateTime Date { get; set; }
+        [Required]
+        [ForeignKey("Address")]
+        public string AddressId { get; set; }
 
         [Required] // Status is required
         public OrderStatus Status { get; set; }
@@ -31,6 +32,7 @@ namespace DataAccess.Entities
         public decimal TotalPrice { get; set; }
 
         public User User { get; set; }
+        public Address Address { get; set; }
 
         public List<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
     }

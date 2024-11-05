@@ -7,7 +7,7 @@ namespace DataAccess.Repository
 {
     public class RepositoryBase<T>(ApplicationDbContext context) : IRepositoryBase<T> where T : BaseEntity
     {
-        private readonly DbSet<T> dbSet = context.Set<T>();
+        protected readonly DbSet<T> dbSet = context.Set<T>();
         private readonly char[] separator = [','];
 
         public async Task<IEnumerable<T>> GetAsync(
@@ -39,14 +39,18 @@ namespace DataAccess.Repository
             return entity ?? throw new KeyNotFoundException("Entity not found");
         }
 
-        public async Task InsertAsync(T entity)
+        public async Task<string> InsertAsync(T entity)
         {
-            await dbSet.AddAsync(entity);
+            entity.CreatedAt = DateTime.Now;
+            var addedEntity = await dbSet.AddAsync(entity);
             await context.SaveChangesAsync();
+
+            return addedEntity.Entity.Id;
         }
 
         public void Update(T entity)
         {
+            entity.UpdatedAt = DateTime.Now;
             dbSet.Attach(entity);
             context.Entry(entity).State = EntityState.Modified;
             context.SaveChanges();

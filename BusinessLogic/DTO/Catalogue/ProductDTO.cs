@@ -1,4 +1,4 @@
-﻿namespace BusinessLogic.DTO
+﻿namespace BusinessLogic.DTO.Catalogue
 {
     public class ProductDTO
     {

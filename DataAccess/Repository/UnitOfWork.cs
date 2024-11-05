@@ -8,7 +8,6 @@ namespace DataAccess.Repository
     public class UnitOfWork(ApplicationDbContext context) : IDisposable, IUnitOfWork
     {
 
-        // Repositories for each entity
         private IRepositoryBase<Category>? categoryRepository;
         private IRepositoryBase<Subcategory>? subcategoryRepository;
         private IRepositoryBase<Product>? productRepository;
@@ -18,6 +17,7 @@ namespace DataAccess.Repository
         private IRepositoryBase<TagValue>? tagValueRepository;
         private IRepositoryBase<Cart>? cartRepository;
         private IRepositoryBase<CartItem>? cartItemRepository;
+        private IRepositoryBase<Address>? addressRepository;
 
         public IRepositoryBase<Category> CategoryRepository
         {
@@ -36,7 +36,7 @@ namespace DataAccess.Repository
 
         public IRepositoryBase<Order> OrderRepository
         {
-            get => orderRepository ??= new RepositoryBase<Order>(context);
+            get => orderRepository ??= new OrderRepository(context);
         }
 
         public IRepositoryBase<OrderDetail> OrderDetailRepository
@@ -62,6 +62,11 @@ namespace DataAccess.Repository
         public IRepositoryBase<CartItem> CartItemRepository
         {
             get => cartItemRepository ??= new RepositoryBase<CartItem>(context);
+        }
+
+        public IRepositoryBase<Address> AddressRepository
+        {
+            get => addressRepository ??= new RepositoryBase<Address>(context);
         }
 
         private bool disposed = false;

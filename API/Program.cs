@@ -31,6 +31,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 builder.Services.AddScoped<FilterBuilderService>();
 builder.Services.AddScoped(typeof(SortingService<>));
+
 builder.Services.AddScoped<UnitOfWork>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();

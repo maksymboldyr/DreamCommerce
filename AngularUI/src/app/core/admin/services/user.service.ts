@@ -5,6 +5,7 @@ import { UserDto } from '../interfaces/user-dto';
 import { catchError, map, Observable } from 'rxjs';
 import { UserAdminUpdateDto } from '../interfaces/user-admin-update-dto';
 import { Router } from '@angular/router';
+import { UserDataDto } from '../../cart/interfaces/user-data-dto';
 
 @Injectable({
   providedIn: 'root'
@@ -57,5 +58,28 @@ export class UserService {
     );
   }
 
-
+  getUserData(userId: string): Observable<UserDataDto> {
+    return this.http.get<UserDataDto>(`${this.api}/Users/get-user-data/${userId}`).pipe(
+      map((user: UserDataDto) => {
+        return {
+          id: user.id,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          phoneNumber: user.phoneNumber,
+          zipCode: user.zipCode,
+          country: user.country,
+          city: user.city,
+          street: user.street,
+          building: user.building,
+          apartment: user.apartment
+        };
+      }),
+      catchError((error: HttpErrorResponse) => {
+        console.error('Get user data failed', error);
+        throw error;
+      })
+    );
+  }
 }
+

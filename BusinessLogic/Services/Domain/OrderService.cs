@@ -4,121 +4,131 @@ using DataAccess.Entities;
 using DataAccess.Interfaces;
 using DataAccess.Repository;
 using Mapster;
-using System.Linq.Expressions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace BusinessLogic.Services.Domain
 {
-    public class OrderService(
-            UnitOfWork unitOfWork,
-            FilterBuilderService filterBuilderService,
-            SortingService<Order> sortingService) : IOrderService
+    public class OrderService : IOrderService
     {
-        public async Task CreateOrder(OrderDTO orderModel)
-        {
-            var order = orderModel.Adapt<Order>();
-            order.Status = OrderStatus.New;
+        private readonly UnitOfWork unitOfWork;
+        private readonly OrderRepository orderRepository;
+        private readonly FilterBuilderService filterBuilderService;
+        private readonly SortingService<Order> orderSortingService;
 
-            if (orderModel.OrderDetails != null)
+        public OrderService(UnitOfWork unitOfWork, FilterBuilderService filterBuilderService, SortingService<Order> orderSortingService)
+        {
+            this.unitOfWork = unitOfWork;
+            orderRepository = unitOfWork.OrderRepository as OrderRepository;
+
+            if (orderRepository == null)
             {
-                foreach (var orderDetailModel in orderModel.OrderDetails)
-                {
-                    var orderDetail = orderDetailModel.Adapt<OrderDetail>();
-                    order.OrderDetails.Add(orderDetail);
-                }
-                order.TotalPrice = order.OrderDetails.Sum(od => CalculateDetailTotalPrice(od.Adapt<OrderDetailDTO>()));
+                throw new ArgumentException("OrderRepository is not of type OrderRepository");
             }
 
-            await unitOfWork.OrderRepository.InsertAsync(order);
+            this.filterBuilderService = filterBuilderService;
+            this.orderSortingService = orderSortingService;
         }
 
-        public async Task CreateOrderDetail(OrderDetailDTO orderDetailModel)
+        public async Task ChangeStatus(string orderId, string status)
         {
-            var orderDetail = orderDetailModel.Adapt<OrderDetail>();
-            orderDetail.TotalPrice = CalculateDetailTotalPrice(orderDetailModel);
-
-            await unitOfWork.OrderDetailRepository.InsertAsync(orderDetail);
-        }
-
-        public async Task DeleteOrder(string id)
-        {
-            await unitOfWork.OrderRepository.DeleteAsync(id);
-        }
-
-        public async Task DeleteOrderDetail(string id)
-        {
-            await unitOfWork.OrderDetailRepository.DeleteAsync(id);
-        }
-
-        public async Task<OrderDTO> GetOrderById(string id)
-        {
-            var order = await unitOfWork.OrderRepository.GetByIdAsync(id);
-            return order.Adapt<OrderDTO>();
-        }
-
-        public async Task<OrderDTO> GetOrderByIdWithDetails(string id)
-        {
-            var order = await unitOfWork.OrderRepository.GetAsync(o => o.Id == id, includeProperties: "OrderDetails");
-
-            return order.FirstOrDefault().Adapt<OrderDTO>();
-        }
-
-        public async Task<OrderDetailDTO> GetOrderDetailById(string id)
-        {
-            var orderDetail = await unitOfWork.OrderDetailRepository.GetByIdAsync(id);
-            return orderDetail.Adapt<OrderDetailDTO>();
-        }
-
-        public async Task<IEnumerable<OrderDetailDTO>> GetOrderDetails(int page, int pageSize)
-        {
-            var orderDetails = await unitOfWork.OrderDetailRepository.GetAsync();
-            return orderDetails
-                .Select(od => od.Adapt<OrderDetailDTO>())
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize);
-        }
-
-        public async Task<IEnumerable<OrderDTO>> GetOrders(string filter, int page, int pageSize, string sortField, string sortOrder = "asc")
-        {
-            Expression<Func<Order, bool>>? filterExpression = filterBuilderService.BuildFilter<Order>(filter);
-            Func<IQueryable<Order>, IOrderedQueryable<Order>>? sortingExpression = sortingService.GetSortExpression(sortField, sortOrder);
-
-            var orders = await unitOfWork.OrderRepository.GetAsync(filter: filterExpression, orderBy: sortingExpression);
-
-            return orders
-                .Select(o => o.Adapt<OrderDTO>())
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize);
-        }
-
-        public async Task<IEnumerable<OrderDTO>> GetOrdersByUserId(string userId, int page, int pageSize)
-        {
-            var orders = await unitOfWork.OrderRepository.GetAsync(o => o.UserId == userId);
-            return orders
-                .Select(o => o.Adapt<OrderDTO>())
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize);
-        }
-
-        public void UpdateOrder(OrderDTO orderModel)
-        {
-            var order = orderModel.Adapt<Order>();
-            order.TotalPrice = orderModel.OrderDetails?.Sum(od => CalculateDetailTotalPrice(od)) ?? 0;
-
+            var order = await unitOfWork.OrderRepository.GetByIdAsync(orderId);
+            order.Status = (OrderStatus)Enum.Parse(typeof(OrderStatus), status);
             unitOfWork.OrderRepository.Update(order);
         }
 
-        public void UpdateOrderDetail(OrderDetailDTO orderDetailModel)
+        public async Task DeleteOrder(string orderId)
         {
-            var orderDetail = orderDetailModel.Adapt<OrderDetail>();
-            orderDetail.TotalPrice = CalculateDetailTotalPrice(orderDetailModel);
+            var order = await unitOfWork.OrderRepository.GetByIdAsync(orderId);
+            var orderDetails = await unitOfWork.OrderDetailRepository.GetAsync(filter: od => od.OrderId == orderId);
 
-            unitOfWork.OrderDetailRepository.Update(orderDetail);
+            foreach (var orderDetail in orderDetails)
+            {
+                await unitOfWork.OrderDetailRepository.DeleteAsync(orderDetail.Id);
+            }
+
+            await unitOfWork.OrderRepository.DeleteAsync(orderId);
         }
 
-        private decimal CalculateDetailTotalPrice(OrderDetailDTO orderDetailModel)
+        public async Task<(IEnumerable<OrderDTO>, int)> GetOrdersWithCount(string filter, int page, int pageSize, string sortField, string sortOrder)
         {
-            var product = unitOfWork.ProductRepository.GetByIdAsync(orderDetailModel.ProductId).Result;
-            return (product.Price - (decimal)Math.Ceiling((float)product.Price * product.Discount)) * orderDetailModel.Quantity;
+            var filterExpression = filterBuilderService.BuildFilter<Order>(filter);
+            var orders = await unitOfWork.OrderRepository.GetAsync(
+                filter: filterExpression,
+                orderBy: orderSortingService.GetSortExpression(sortField, sortOrder),
+                includeProperties: "Address"
+            );
+            var ordersDTO = orders.Select(o => o.Adapt<OrderDTO>()).ToList();
+            var count = orders.Count();
+
+            var pagedOrders = ordersDTO.Skip((page - 1) * pageSize).Take(pageSize);
+
+            return (pagedOrders, count);
+        }
+
+        public async Task<OrderDTO> GetOrderWithDetailsById(string orderId)
+        {
+            var order = await orderRepository.GetOrderWithDetailsByIdAsync(orderId);
+            return order.Adapt<OrderDTO>();
+        }
+
+        public async Task PlaceOrderAsync(OrderDTO orderDTO)
+        {
+            if (orderDTO == null)
+            {
+                throw new ArgumentNullException(nameof(orderDTO));
+            }
+
+            if (orderDTO.OrderDetails == null || orderDTO.OrderDetails.Count == 0)
+            {
+                throw new ArgumentException("Order must have at least one order detail");
+            }
+
+            var order = orderDTO.Adapt<Order>();
+
+            if (order.AddressId == null)
+            {
+                var address = new Address
+                {
+                    Apartment = order.Address.Apartment,
+                    Building = order.Address.Building,
+                    Street = order.Address.Street,
+                    City = order.Address.City,
+                    Country = order.Address.Country,
+                    ZipCode = order.Address.ZipCode
+                };
+
+                order.AddressId = await unitOfWork.AddressRepository.InsertAsync(address);
+            }
+
+            order.TotalPrice = await CheckTotalPrice(orderDTO);
+
+            await orderRepository.InsertAsync(order);
+        }
+
+        public async Task<decimal> CheckTotalPrice(OrderDTO orderDTO)
+        {
+            if (orderDTO.OrderDetails == null || orderDTO.OrderDetails.Count == 0)
+            {
+                throw new ArgumentException("Order must have at least one order detail");
+            }
+
+            var products = await unitOfWork.ProductRepository.GetAsync(filter: p => orderDTO.OrderDetails.Select(od => od.ProductId).Contains(p.Id));
+            var totalPrice = 0m;
+            totalPrice = orderDTO.OrderDetails.Sum(od => products.First(p => p.Id == od.ProductId).Price * od.Quantity);
+            return totalPrice;
+        }
+
+        public async Task<IEnumerable<OrderDTO>> GetOrdersByUserId(string userId)
+        {
+            var orders = await unitOfWork.OrderRepository.GetAsync(
+                    filter: o => o.UserId == userId,
+                    includeProperties: "Address"
+                    );
+            return orders.Select(o => o.Adapt<OrderDTO>()).ToList();
         }
     }
 }

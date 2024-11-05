@@ -1,4 +1,4 @@
-﻿namespace BusinessLogic.DTO
+﻿namespace BusinessLogic.DTO.Auth
 {
     public class EditUserRolesDTO
     {

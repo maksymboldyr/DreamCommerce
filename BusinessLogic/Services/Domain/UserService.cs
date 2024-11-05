@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.DTO;
+using BusinessLogic.DTO.Auth;
 using BusinessLogic.Interfaces;
 using DataAccess.Entities.Users;
 using DataAccess.Interfaces;
@@ -20,6 +21,12 @@ namespace BusinessLogic.Services.Domain
         UserManager<User> userManager,
         IConfiguration configuration) : IUserService
     {
+        public async Task<UserDataDto> GetUserDataByIdAsync(string id)
+        {
+            var user = await userRepository.GetUserByIdAsync(id);
+            return user.Adapt<UserDataDto>();
+        }
+
         public async Task<bool> CreateUserAsync(RegistrationDTO userModel)
         {
             var user = userModel.Adapt<User>();

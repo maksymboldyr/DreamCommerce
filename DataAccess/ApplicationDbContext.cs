@@ -82,6 +82,11 @@ namespace DataAccess
                 .WithMany(u => u.Orders)
                 .HasForeignKey(o => o.UserId);
 
+            modelBuilder.Entity<Order>()
+                .HasOne(o => o.Address)
+                .WithMany()
+                .HasForeignKey(o => o.AddressId);
+
             modelBuilder.Entity<OrderDetail>()
                 .HasOne(od => od.Order)
                 .WithMany(o => o.OrderDetails)
@@ -108,8 +113,8 @@ namespace DataAccess
                 .HasForeignKey(ci => ci.CartId);
 
             modelBuilder.Entity<Cart>()
-            .Navigation(c => c.CartItems)
-            .AutoInclude();
+                .Navigation(c => c.CartItems)
+                .AutoInclude();
 
             modelBuilder.Entity<CartItem>()
                 .Navigation(ci => ci.Product)

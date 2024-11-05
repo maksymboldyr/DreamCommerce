@@ -1,4 +1,4 @@
-﻿using BusinessLogic.DTO;
+﻿using BusinessLogic.DTO.Catalogue;
 
 namespace BusinessLogic.Interfaces
 {

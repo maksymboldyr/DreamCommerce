@@ -1,4 +1,5 @@
 ﻿using BusinessLogic.DTO;
+using BusinessLogic.DTO.Auth;
 
 namespace BusinessLogic.Interfaces
 {
@@ -18,5 +19,6 @@ namespace BusinessLogic.Interfaces
         Task<IEnumerable<string>> GetRolesNamesAsync();
         Task<bool> SetUserRole(EditUserRolesDTO editUserRolesDTO);
         Task<bool> RemoveRole(EditUserRolesDTO editUserRolesDTO);
+        Task<UserDataDto> GetUserDataByIdAsync(string id);
     }
 }
