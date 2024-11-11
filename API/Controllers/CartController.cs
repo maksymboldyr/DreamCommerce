@@ -1,54 +1,47 @@
 ﻿using BusinessLogic.DTO;
 using BusinessLogic.Interfaces;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers
+namespace API.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+[Authorize]
+public class CartController(ICartService cartService) : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class CartController : ControllerBase
+    [HttpGet("{userId}")]
+    public async Task<ActionResult<CartDto>> GetCartAsync(string userId)
     {
-        private readonly ICartService _cartService;
+        var cart = await cartService.GetUserCartAsync(userId);
+        return Ok(cart);
+    }
 
-        public CartController(ICartService cartService)
-        {
-            _cartService = cartService;
-        }
+    [HttpPost("add")]
+    public async Task<ActionResult<CartDto>> AddItemToCartAsync([FromBody] EditProductInCartDto productInCartDto)
+    {
+        await cartService.AddProductToCartAsync(productInCartDto);
+        return Ok();
+    }
 
-        [HttpGet("{userId}")]
-        public async Task<ActionResult<CartDto>> GetCartAsync(string userId)
-        {
-            var cart = await _cartService.GetUserCartAsync(userId);
-            return Ok(cart);
-        }
+    [HttpPost("remove")]
+    public async Task<ActionResult<CartDto>> RemoveItemFromCartAsync([FromBody] EditProductInCartDto productInCartDto)
+    {
+        await cartService.RemoveProductFromCartAsync(productInCartDto);
+        return Ok();
+    }
 
-        [HttpPost("add")]
-        public async Task<ActionResult<CartDto>> AddItemToCartAsync([FromBody] EditProductInCartDto productInCartDto)
-        {
-            await _cartService.AddProductToCartAsync(productInCartDto);
-            return Ok();
-        }
+    [HttpPost("removeAll")]
+    public async Task<ActionResult<CartDto>> RemoveAllItemsFromCartAsync([FromBody] EditProductInCartDto productInCartDto)
+    {
+        await cartService.RemoveItemFromCartAsync(productInCartDto);
+        return Ok();
+    }
 
-        [HttpPost("remove")]
-        public async Task<ActionResult<CartDto>> RemoveItemFromCartAsync([FromBody] EditProductInCartDto productInCartDto)
-        {
-            await _cartService.RemoveProductFromCartAsync(productInCartDto);
-            return Ok();
-        }
-
-        [HttpPost("removeAll")]
-        public async Task<ActionResult<CartDto>> RemoveAllItemsFromCartAsync([FromBody] EditProductInCartDto productInCartDto)
-        {
-            await _cartService.RemoveItemFromCartAsync(productInCartDto);
-            return Ok();
-        }
-
-        [HttpDelete("clear/{userId}")]
-        public async Task<ActionResult<CartDto>> ClearCartAsync(string userId)
-        {
-            await _cartService.ClearCartAsync(userId);
-            return Ok();
-        }
+    [HttpDelete("clear/{userId}")]
+    public async Task<ActionResult<CartDto>> ClearCartAsync(string userId)
+    {
+        await cartService.ClearCartAsync(userId);
+        return Ok();
     }
 }

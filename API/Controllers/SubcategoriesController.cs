@@ -1,122 +1,118 @@
 ﻿using API.Models;
 using BusinessLogic.DTO.Catalogue;
 using BusinessLogic.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers
+namespace API.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+public class SubcategoriesController(ICategoryService categoryService) : ControllerBase
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class SubcategoriesController : ControllerBase
+    // GET: api/Subcategory/All
+    [HttpGet]
+    [Route("All")]
+    public async Task<ActionResult<IEnumerable<SubcategoryDto>>> GetSubcategories()
     {
-        private readonly ICategoryService _categoryService;
-
-        public SubcategoriesController(ICategoryService categoryService)
+        try
         {
-            _categoryService = categoryService;
+            var subcategories = await categoryService.GetSubcategories();
+            return Ok(subcategories);
         }
-
-        // GET: api/Subcategory/All
-        [HttpGet]
-        [Route("All")]
-        public async Task<ActionResult<IEnumerable<SubcategoryDTO>>> GetSubcategories()
+        catch (Exception ex)
         {
-            try
-            {
-                var subcategories = await _categoryService.GetSubcategories();
-                return Ok(subcategories);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            return StatusCode(500, $"Internal server error: {ex.Message}");
         }
+    }
 
-        // GET: api/Subcategory
-        [HttpGet]
-        public async Task<ActionResult<TableViewModel<SubcategoryDTO>>> GetSubcategories([FromQuery] string filter = "", [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "Name", [FromQuery] string sortOrder = "asc")
+    // GET: api/Subcategory
+    [HttpGet]
+    public async Task<ActionResult<TableViewModel<SubcategoryDto>>> GetSubcategories([FromQuery] string filter = "", [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string sortField = "Name", [FromQuery] string sortOrder = "asc")
+    {
+        try
         {
-            try
+            var subcategories = await categoryService.GetSubcategoriesWithCount(filter, page, pageSize, sortField, sortOrder);
+            var tableViewModel = new TableViewModel<SubcategoryDto>
             {
-                var subcategories = await _categoryService.GetSubcategoriesWithCount(filter, page, pageSize, sortField, sortOrder);
-                var tableViewModel = new TableViewModel<SubcategoryDTO>
-                {
-                    Data = subcategories.Item1,
-                    TotalCount = subcategories.Item2,
-                };
-                return Ok(tableViewModel);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+                Data = subcategories.Item1,
+                TotalCount = subcategories.Item2,
+            };
+            return Ok(tableViewModel);
         }
-
-
-        // GET: api/Subcategory/{id}
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetSubcategory(string id)
+        catch (Exception ex)
         {
-            try
-            {
-                var subcategory = await _categoryService.GetSubcategoryById(id);
-
-                if (subcategory == null)
-                {
-                    return NotFound("Subcategory not found.");
-                }
-
-                return Ok(subcategory);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            return StatusCode(500, $"Internal server error: {ex.Message}");
         }
+    }
 
-        // POST: api/Subcategory
-        [HttpPost]
-        public async Task<IActionResult> CreateSubcategory([FromBody] SubcategoryDTO subcategory)
+
+    // GET: api/Subcategory/{id}
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetSubcategory(string id)
+    {
+        try
         {
-            try
+            var subcategory = await categoryService.GetSubcategoryById(id);
+
+            if (subcategory == null)
             {
-                await _categoryService.CreateSubcategory(subcategory);
-                return StatusCode(201, "Subcategory created successfully.");
+                return NotFound("Subcategory not found.");
             }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+
+            return Ok(subcategory);
         }
-
-        // PUT: api/Subcategory
-        [HttpPut]
-        public async Task<IActionResult> UpdateSubcategory([FromBody] SubcategoryDTO subcategory)
+        catch (Exception ex)
         {
-            try
-            {
-                await _categoryService.UpdateSubcategory(subcategory);
-                return Ok("Subcategory updated successfully.");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            return StatusCode(500, $"Internal server error: {ex.Message}");
         }
+    }
 
-        // DELETE: api/Subcategory/{id}
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSubcategory(string id)
+    // POST: api/Subcategory
+    [HttpPost]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> CreateSubcategory([FromBody] SubcategoryDto subcategory)
+    {
+        try
         {
-            try
-            {
-                await _categoryService.DeleteSubcategory(id);
-                return Ok("Subcategory deleted successfully.");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
+            await categoryService.CreateSubcategory(subcategory);
+            return StatusCode(201, "Subcategory created successfully.");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+
+    // PUT: api/Subcategory
+    [HttpPut]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> UpdateSubcategory([FromBody] SubcategoryDto subcategory)
+    {
+        try
+        {
+            await categoryService.UpdateSubcategory(subcategory);
+            return Ok("Subcategory updated successfully.");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
+        }
+    }
+
+    // DELETE: api/Subcategory/{id}
+    [HttpDelete("{id}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<IActionResult> DeleteSubcategory(string id)
+    {
+        try
+        {
+            await categoryService.DeleteSubcategory(id);
+            return Ok("Subcategory deleted successfully.");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"Internal server error: {ex.Message}");
         }
     }
 }
