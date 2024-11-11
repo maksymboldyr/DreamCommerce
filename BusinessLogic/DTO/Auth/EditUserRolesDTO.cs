@@ -1,8 +1,17 @@
-﻿namespace BusinessLogic.DTO.Auth
+﻿namespace BusinessLogic.DTO.Auth;
+
+/// <summary>
+/// Data transfer object for editing user roles.
+/// </summary>
+public class EditUserRolesDto
 {
-    public class EditUserRolesDTO
-    {
-        public string UserId { get; set; }
-        public string RoleName { get; set; }
-    }
+    /// <summary>
+    /// Identifier of the user.
+    /// </summary>
+    public string UserId { get; set; }
+
+    /// <summary>
+    /// Name of the role.
+    /// </summary>
+    public string RoleName { get; set; }
 }

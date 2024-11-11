@@ -1,7 +1,5 @@
 ﻿using DataAccess.Entities;
-using DataAccess.Entities.Users;
 using DataAccess.Interfaces;
-using System;
 
 namespace DataAccess.Repository
 {

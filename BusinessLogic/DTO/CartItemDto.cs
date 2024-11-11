@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BusinessLogic.DTO.Catalogue;
+﻿using BusinessLogic.DTO.Catalogue;
 
 namespace BusinessLogic.DTO
 {
     public class CartItemDto
     {
-        public ProductDTO ProductDTO { get; set; }
+        public ProductDto ProductDTO { get; set; }
         public int Quantity { get; set; }
         public decimal Total { get; set; }
     }

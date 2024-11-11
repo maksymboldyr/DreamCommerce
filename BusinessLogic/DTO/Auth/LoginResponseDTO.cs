@@ -1,7 +1,12 @@
-﻿namespace BusinessLogic.DTO.Auth
+﻿namespace BusinessLogic.DTO.Auth;
+
+/// <summary>
+/// Result of a login operation.
+/// </summary>
+public class LoginResponseDto
 {
-    public class LoginResponseDTO
-    {
-        public string Token { get; set; }
-    }
+    /// <summary>
+    /// Access token returned on successful login.
+    /// </summary>
+    public string Token { get; set; }
 }

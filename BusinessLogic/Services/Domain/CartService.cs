@@ -1,163 +1,189 @@
 ﻿using BusinessLogic.DTO;
 using DataAccess.Repository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Mapster;
 using DataAccess.Entities;
 using BusinessLogic.Interfaces;
 using BusinessLogic.DTO.Catalogue;
 
-namespace BusinessLogic.Services.Domain
+namespace BusinessLogic.Services.Domain;
+
+/// <summary>
+/// Represents a cart service. Defines methods for managing carts.
+/// </summary>
+public class CartService : ICartService
 {
-    public class CartService : ICartService
+    private readonly UnitOfWork unitOfWork;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CartService"/> class.
+    /// </summary>
+    /// <param name="unitOfWork">The unit of work.</param>
+    public CartService(UnitOfWork unitOfWork)
     {
-        private readonly UnitOfWork unitOfWork;
+        this.unitOfWork = unitOfWork;
+    }
 
-        public CartService(UnitOfWork unitOfWork)
+    /// <summary>
+    /// Gets the user's cart.
+    /// </summary>
+    /// <param name="userId">The user identifier.</param>
+    /// <returns> <see cref="CartDto"/> object.</returns>
+    public async Task<CartDto> GetUserCartAsync(string userId)
+    {
+        var cartEnumerable = await unitOfWork.CartRepository.GetAsync(
+            c => c.UserId == userId
+        );
+        var cart = cartEnumerable.FirstOrDefault();
+        if (cart == null)
         {
-            this.unitOfWork = unitOfWork;
+            return null;
         }
 
-        public async Task<CartDto> GetUserCartAsync(string userId)
+        var cartDto = new CartDto
         {
-            var cartEnumerable = await unitOfWork.CartRepository.GetAsync(
-                c => c.UserId == userId
-            );
-            var cart = cartEnumerable.FirstOrDefault();
-            if (cart == null)
+            UserId = cart.UserId,
+            CartItems = cart.CartItems.Select(ci => new CartItemDto
             {
-                return null;
-            }
+                Quantity = ci.Quantity,
+                ProductDTO = ci.Product.Adapt<ProductDto>(),
+                Total = ci.Quantity * ci.Product.Price,
+            }).ToList()
+        };
 
-            var cartDto = new CartDto
-            {
-                UserId = cart.UserId,
-                CartItems = cart.CartItems.Select(ci => new CartItemDto
-                {
-                    Quantity = ci.Quantity,
-                    ProductDTO = ci.Product.Adapt<ProductDTO>(),
-                    Total = ci.Quantity * ci.Product.Price,
-                }).ToList()
-            };
+        cartDto.Total = cartDto.CartItems.Sum(ci => ci.Total);
 
-            cartDto.Total = cartDto.CartItems.Sum(ci => ci.Total);
+        return cartDto;
+    }
 
-            return cartDto;
-        }
+    /// <summary>
+    /// Adds a product to the cart.
+    /// </summary>
+    /// <param name="productInCartDto">The product in cart DTO.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    public async Task AddProductToCartAsync(EditProductInCartDto productInCartDto)
+    {
+        var existingCart = (await unitOfWork.CartRepository.GetAsync(c => c.UserId == productInCartDto.UserId)).FirstOrDefault();
 
-        public async Task AddProductToCartAsync(EditProductInCartDto productInCartDto)
+        if (existingCart == null)
         {
-            var existingCart = (await unitOfWork.CartRepository.GetAsync(c => c.UserId == productInCartDto.UserId)).FirstOrDefault();
-
-            if (existingCart == null)
+            var cart = new Cart
             {
-                var cart = new Cart
+                UserId = productInCartDto.UserId,
+                CartItems = new List<CartItem>
                 {
-                    UserId = productInCartDto.UserId,
-                    CartItems = new List<CartItem>
-                    {
-                        new CartItem
-                        {
-                            ProductId = productInCartDto.ProductId,
-                            Quantity = productInCartDto.Quantity,
-                            CartId = productInCartDto.UserId
-                        }
-                    }
-                };
-                await unitOfWork.CartRepository.InsertAsync(cart);
-            }
-            else
-            {
-                var existingCartItem = existingCart.CartItems.FirstOrDefault(ci => ci.ProductId == productInCartDto.ProductId);
-                if (existingCartItem == null)
-                {
-                    var cartItem = new CartItem
+                    new CartItem
                     {
                         ProductId = productInCartDto.ProductId,
                         Quantity = productInCartDto.Quantity,
-                        CartId = existingCart.Id
-                    };
-                    await unitOfWork.CartItemRepository.InsertAsync(cartItem);
+                        CartId = productInCartDto.UserId
+                    }
                 }
-                else
-                {
-                    existingCartItem.Quantity += productInCartDto.Quantity;
-                    unitOfWork.CartItemRepository.Update(existingCartItem);
-                }
-
-                unitOfWork.CartRepository.Update(existingCart);
-            }
+            };
+            await unitOfWork.CartRepository.InsertAsync(cart);
         }
-
-        public async Task RemoveProductFromCartAsync(EditProductInCartDto productInCartDto)
+        else
         {
-            var existingCarts = await unitOfWork.CartRepository.GetAsync(c => c.UserId == productInCartDto.UserId);
-            var existingCart = existingCarts.FirstOrDefault();
-
-            if (existingCart == null)
-            {
-                return;
-            }
-
             var existingCartItem = existingCart.CartItems.FirstOrDefault(ci => ci.ProductId == productInCartDto.ProductId);
-
             if (existingCartItem == null)
             {
-                return;
-            }
-
-            if (existingCartItem.Quantity > productInCartDto.Quantity)
-            {
-                existingCartItem.Quantity -= productInCartDto.Quantity;
+                var cartItem = new CartItem
+                {
+                    ProductId = productInCartDto.ProductId,
+                    Quantity = productInCartDto.Quantity,
+                    CartId = existingCart.Id
+                };
+                await unitOfWork.CartItemRepository.InsertAsync(cartItem);
             }
             else
             {
-                existingCart.CartItems.Remove(existingCartItem);
+                existingCartItem.Quantity += productInCartDto.Quantity;
+                unitOfWork.CartItemRepository.Update(existingCartItem);
             }
 
             unitOfWork.CartRepository.Update(existingCart);
         }
+    }
 
-        public async Task ClearCartAsync(string userId)
+    /// <summary>
+    /// Removes a product from the cart.
+    /// </summary>
+    /// <param name="productInCartDto">The product in cart DTO.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    public async Task RemoveProductFromCartAsync(EditProductInCartDto productInCartDto)
+    {
+        var existingCarts = await unitOfWork.CartRepository.GetAsync(c => c.UserId == productInCartDto.UserId);
+        var existingCart = existingCarts.FirstOrDefault();
+
+        if (existingCart == null)
         {
-            var carts = await unitOfWork.CartRepository.GetAsync(c => c.UserId == userId);
-            var cart = carts.FirstOrDefault();
-            if (cart == null)
-            {
-                return;
-            }
-
-            foreach (var cartItem in cart.CartItems)
-            {
-                await unitOfWork.CartItemRepository.DeleteAsync(cartItem.Id);
-            }
-
-            cart.CartItems.Clear();
-
-            unitOfWork.CartRepository.Update(cart);
+            return;
         }
 
-        public async Task RemoveItemFromCartAsync(EditProductInCartDto productInCartDto)
+        var existingCartItem = existingCart.CartItems.FirstOrDefault(ci => ci.ProductId == productInCartDto.ProductId);
+
+        if (existingCartItem == null)
         {
-            var existingCarts = await unitOfWork.CartRepository.GetAsync(c => c.UserId == productInCartDto.UserId);
-            var existingCart = existingCarts.FirstOrDefault();
-
-            if (existingCart == null)
-            {
-                return;
-            }
-
-            var existingCartItem = existingCart.CartItems.FirstOrDefault(ci => ci.ProductId == productInCartDto.ProductId);
-
-            if (existingCartItem == null)
-            {
-                return;
-            }
-
-            await unitOfWork.CartItemRepository.DeleteAsync(existingCartItem.Id);
+            return;
         }
+
+        if (existingCartItem.Quantity > productInCartDto.Quantity)
+        {
+            existingCartItem.Quantity -= productInCartDto.Quantity;
+        }
+        else
+        {
+            existingCart.CartItems.Remove(existingCartItem);
+        }
+
+        unitOfWork.CartRepository.Update(existingCart);
+    }
+
+    /// <summary>
+    /// Clears the user's cart.
+    /// </summary>
+    /// <param name="userId">The user identifier.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    public async Task ClearCartAsync(string userId)
+    {
+        var carts = await unitOfWork.CartRepository.GetAsync(c => c.UserId == userId);
+        var cart = carts.FirstOrDefault();
+        if (cart == null)
+        {
+            return;
+        }
+
+        foreach (var cartItem in cart.CartItems)
+        {
+            await unitOfWork.CartItemRepository.DeleteAsync(cartItem.Id);
+        }
+
+        cart.CartItems.Clear();
+
+        unitOfWork.CartRepository.Update(cart);
+    }
+
+    /// <summary>
+    /// Removes an item from the cart.
+    /// </summary>
+    /// <param name="productInCartDto">The product in cart DTO.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    public async Task RemoveItemFromCartAsync(EditProductInCartDto productInCartDto)
+    {
+        var existingCarts = await unitOfWork.CartRepository.GetAsync(c => c.UserId == productInCartDto.UserId);
+        var existingCart = existingCarts.FirstOrDefault();
+
+        if (existingCart == null)
+        {
+            return;
+        }
+
+        var existingCartItem = existingCart.CartItems.FirstOrDefault(ci => ci.ProductId == productInCartDto.ProductId);
+
+        if (existingCartItem == null)
+        {
+            return;
+        }
+
+        await unitOfWork.CartItemRepository.DeleteAsync(existingCartItem.Id);
     }
 }

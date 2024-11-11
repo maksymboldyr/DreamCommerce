@@ -24,14 +24,13 @@ public interface IRepositoryBase<T> where T : class
     /// Gets an entity by its ID.
     /// </summary>
     /// <param name="id"></param>
-    /// <returns></returns>
+    /// <returns> <seealso cref="T"/> entity.</returns>
     Task<T> GetByIdAsync(string id);
 
     /// <summary>
     /// Inserts an entity to the database.
     /// </summary>
     /// <param name="entity"></param>
-    /// <returns></returns>
     Task<string> InsertAsync(T entity);
 
     /// <summary>
@@ -44,6 +43,5 @@ public interface IRepositoryBase<T> where T : class
     /// Deletes an entity from the database.
     /// </summary>
     /// <param name="id"></param>
-    /// <returns></returns>
     Task DeleteAsync(string id);
 }
