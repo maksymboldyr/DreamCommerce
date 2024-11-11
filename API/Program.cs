@@ -10,7 +10,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using BusinessLogic.Services.Domain;
-using DataAccess.Entities;
 using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -29,6 +28,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //builder.Services.AddDbContext<ApplicationContext>(
 //    options => options.UseInMemoryDatabase("AppDb"));
 
+#region Inject custom services
 builder.Services.AddScoped<FilterBuilderService>();
 builder.Services.AddScoped(typeof(SortingService<>));
 
@@ -40,7 +40,9 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICartService, CartService>();
+#endregion
 
+#region Auth
 builder.Services.AddAuthorization();
 
 builder.Services.AddIdentity<User, Role>()
@@ -67,15 +69,13 @@ builder.Services.AddAuthentication(options =>
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
         };
     });
-
-
+#endregion
 
 builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-    
+builder.Services.AddSwaggerGen();    
 
 var app = builder.Build();
 
