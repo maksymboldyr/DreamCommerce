@@ -92,7 +92,7 @@ export class CategoriesComponent {
   }
 
   editCategory(category: CategoryDto) {
-    // Implement edit logic here
+    // TODO: Implement edit category
   }
 
   deleteCategory(category: CategoryDto) {

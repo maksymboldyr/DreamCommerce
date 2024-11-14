@@ -121,7 +121,7 @@ export class SubcategoriesComponent {
   }
 
   deleteSubcategory(subcategory: SubcategoryDto) {
-    // Implement delete logic here
+    // TODO: Implement delete subcategory
   }
 
   toggleFormDialog() {

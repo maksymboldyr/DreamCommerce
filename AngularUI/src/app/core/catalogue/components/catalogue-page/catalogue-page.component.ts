@@ -22,7 +22,7 @@ export class CataloguePageComponent implements OnInit {
       this.setBreadcrumbs();
     });
 
-    this.setBreadcrumbs(); // Ensure breadcrumbs are set on initial load
+    this.setBreadcrumbs();
 
     this.breadcrumbService.breadcrumbItems$.subscribe(items => {
       this.breadcrumbItems = items;

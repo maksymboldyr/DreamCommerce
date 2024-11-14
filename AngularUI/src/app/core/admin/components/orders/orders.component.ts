@@ -84,7 +84,6 @@ export class OrdersComponent {
         this.orders = response.data;
         this.totalRecords = response.totalCount;
         this.loading = false;
-        console.log(this.orders);
       },
       error: (error) => {
         console.error('Error loading orders', error);

@@ -11,7 +11,6 @@ export class PasswordValidationService {
   ): ValidationErrors | null => {
     const password = control.value || '';
 
-    // Regular expressions for validation
     const lowerCaseLetters = /[a-zа-я]/g;
     const upperCaseLetters = /[A-ZА-Я]/g;
     const numbers = /[0-9]/g;

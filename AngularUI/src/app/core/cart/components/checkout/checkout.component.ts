@@ -93,7 +93,7 @@ export class CheckoutComponent implements OnInit {
     this.checkoutService.placeOrder(this.order).subscribe(
       response => {
         console.log('Order placed successfully', response);
-        this.router.navigate(['/checkout-confirm']); // Navigate to the confirmation page
+        this.router.navigate(['/checkout-confirm']);
       },
       error => {
         console.error('Error placing order', error);

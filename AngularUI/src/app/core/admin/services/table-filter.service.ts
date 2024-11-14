@@ -13,12 +13,7 @@ export class TableFilterService {
   sortField: string | string[] = '';
   sortOrder: number|undefined;
 
-  constructor() {
-
-  }
-
   get filtersString() {
-    //remove filters with empty array as value
     this.filters = this.filters.filter(filter => {
       return !(Array.isArray(filter.value) && filter.value.length === 0);
     });

@@ -66,7 +66,6 @@ export class RegisterComponent {
     return this.registerForm.get('confirmPassword');
   }
 
-  // Tracking validity for password suggestions
   get passwordErrors() {
     return this.password?.errors || {};
   }

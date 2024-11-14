@@ -54,7 +54,6 @@ export class UserOrderDetailsComponent implements OnInit {
         },
         error => {
           console.error('Error changing order status', error);
-          // Handle error (e.g., show an error message)
         }
       );
     }
