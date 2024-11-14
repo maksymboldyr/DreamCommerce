@@ -79,6 +79,11 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+if (!Directory.Exists(Path.Combine(app.Environment.WebRootPath, "images")))
+{
+    Directory.CreateDirectory(Path.Combine(app.Environment.WebRootPath, "images"));
+}
+
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(
