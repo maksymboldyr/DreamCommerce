@@ -1,0 +1,85 @@
+<p-toolbar styleClass="mb-4 gap-2">
+    <ng-template pTemplate="left">
+        <p-button 
+            severity="success" 
+            label="New Order" 
+            icon="pi pi-plus" 
+            class="mr-2"  
+            (click)="toggleFormDialog()"
+            />
+    </ng-template>
+</p-toolbar>
+<p-table
+    [tableStyle]="{'width': '80rem', 'min-height': '20rem'}"
+    [scrollable]="true" 
+    scrollHeight="45rem" 
+    [value]="orders"
+    [loading]="loading"
+    [lazy]="true"
+    [paginator]="true"
+    [rows]="5"
+    [totalRecords]="totalRecords"
+    [rowsPerPageOptions]="[5, 10, 20]"    
+    [paginatorPosition]="'bottom'"
+    [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [sortOrder]="1"
+    (onLazyLoad)="loadData($event)">
+    <ng-template pTemplate="header">
+        <tr>
+            <th class="w-4rem"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
+            <th pSortableColumn="Id">Order ID<p-sortIcon field="Id"></p-sortIcon></th>
+            <th pSortableColumn="TotalPrice">Total Price<p-sortIcon field="TotalPrice"></p-sortIcon></th>
+            <th pSortableColumn="Status">Status<p-sortIcon field="Status"></p-sortIcon></th>
+            <th>Actions</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-order>
+        <tr>
+            <td><p-tableCheckbox [value]="order"></p-tableCheckbox></td>
+            <td>{{order.id}}</td>
+            <td>{{order.totalPrice | currency}}</td>
+            <td>{{order.status}}</td>
+            <td>
+                <p-button 
+                icon="pi pi-eye" 
+                class="mr-2" 
+                [rounded]="true" 
+                [outlined]="true" 
+                severity="info" 
+                (click)="viewOrder(order)"
+                ></p-button>
+                <p-button 
+                icon="pi pi-trash" 
+                severity="danger" 
+                [rounded]="true" 
+                [outlined]="true"
+                (click)="deleteOrder(order)"
+                ></p-button>
+                <p-button 
+                icon="pi pi-pencil" 
+                severity="warning" 
+                [rounded]="true" 
+                [outlined]="true"
+                (click)="openStatusDialog(order)"
+                ></p-button>
+            </td>
+        </tr>
+    </ng-template>        
+</p-table>
+
+<p-dialog header="Change Order Status" [(visible)]="displayStatusDialog" [modal]="true" [closable]="false" [style]="{width: '30vw'}">
+    <div class="p-fluid">
+        <div class="field">
+            <label for="status">Status</label>
+            <p-dropdown 
+            [options]="statusOptions" 
+            [(ngModel)]="selectedStatus"
+            appendTo="body"
+            ></p-dropdown>
+        </div>
+    </div>
+    <p-footer>
+        <p-button label="Cancel" icon="pi pi-times" (click)="displayStatusDialog=false" class="p-button-text"></p-button>
+        <p-button label="Save" icon="pi pi-check" (click)="changeOrderStatus()"></p-button>
+    </p-footer>
+</p-dialog>

@@ -1,0 +1,17 @@
+<div class="product-page p-4">
+    <p-card>
+      <div class="grid">
+        <div class="col-12 md:col-6 flex justify-content-center align-items-center">
+          <img [src]="getImageUrl(product)" alt="{{ product.name }}" class="w-auto h-30rem border-round" />
+        </div>
+        <div class="col-12 md:col-6">
+            <div class="product-details">
+                <h2>{{ product.name }}</h2>
+                <p>{{ product.description }}</p>
+                <p>Price: {{ product.price }}</p>
+                <button pButton type="button" label="Add to Cart" icon="pi pi-shopping-cart" (click)="addToCart()"></button>
+            </div>
+        </div>
+      </div>
+    </p-card>
+  </div>

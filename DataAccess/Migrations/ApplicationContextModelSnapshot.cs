@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DataAccess.Migrations
 {
-    [DbContext(typeof(ApplicationContext))]
+    [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -17,13 +17,606 @@ namespace DataAccess.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.7");
 
-            modelBuilder.Entity("DataAccess.Entities.User", b =>
+            modelBuilder.Entity("DataAccess.Entities.Address", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Apartment")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Building")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ZipCode")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Addresses");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Cart", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Carts");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.CartItem", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CartId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ProductId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CartId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("CartItems");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Category", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Category");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1d",
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3908),
+                            Name = "Electronics"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1e",
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3914),
+                            Name = "Clothing"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1f",
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3915),
+                            Name = "Books"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1g",
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3916),
+                            Name = "Furniture"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1h",
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3916),
+                            Name = "Toys"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1i",
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3917),
+                            Name = "Tools"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1j",
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3918),
+                            Name = "Sports"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1k",
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3919),
+                            Name = "Music"
+                        });
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Order", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AddressId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.OrderDetail", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("OrderId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ProductId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderDetails");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Product", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("TEXT");
+
+                    b.Property<double>("Discount")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ShopId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Stock")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("SubcategoryId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ShopId");
+
+                    b.HasIndex("SubcategoryId");
+
+                    b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.ProductTag", b =>
+                {
+                    b.Property<string>("ProductId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TagId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("TagValueId")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ProductId", "TagId", "TagValueId");
+
+                    b.HasIndex("TagId");
+
+                    b.HasIndex("TagValueId");
+
+                    b.ToTable("ProductsTags");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Shop", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("AddressId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Shop");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Subcategory", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CategoryId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("Subcategories");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1l",
+                            CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1d",
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3963),
+                            Name = "Smartphones"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1m",
+                            CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1d",
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3964),
+                            Name = "Laptops"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1n",
+                            CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1e",
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3965),
+                            Name = "T-Shirts"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1o",
+                            CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1e",
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3966),
+                            Name = "Jeans"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1p",
+                            CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1f",
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3967),
+                            Name = "Fantasy"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1q",
+                            CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1f",
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3968),
+                            Name = "Science Fiction"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1r",
+                            CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1g",
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3969),
+                            Name = "Sofas"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1s",
+                            CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1g",
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3969),
+                            Name = "Beds"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1t",
+                            CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1h",
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3970),
+                            Name = "Cars"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1u",
+                            CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1h",
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3971),
+                            Name = "Dinosaurs"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1v",
+                            CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1i",
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3972),
+                            Name = "Drills"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1w",
+                            CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1i",
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3972),
+                            Name = "Screwdrivers"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1x",
+                            CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1j",
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3973),
+                            Name = "Football"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1y",
+                            CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1j",
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3974),
+                            Name = "Basketball"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1z",
+                            CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1k",
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3975),
+                            Name = "Guitars"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e10",
+                            CategoryId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1k",
+                            CreatedAt = new DateTime(2024, 11, 4, 15, 50, 19, 297, DateTimeKind.Utc).AddTicks(3975),
+                            Name = "Drums"
+                        });
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Tag", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SubcategoryId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SubcategoryId");
+
+                    b.ToTable("Tags");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.TagValue", b =>
+                {
+                    b.Property<string>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TagId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("TagValues");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Users.Role", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex");
+
+                    b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1b",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1c",
+                            Name = "Shop",
+                            NormalizedName = "SHOP"
+                        });
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Users.User", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("AddressId")
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -35,6 +628,14 @@ namespace DataAccess.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("INTEGER");
+
+                    b.Property<string>("FirstName")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("LastName")
+                        .HasMaxLength(50)
+                        .HasColumnType("TEXT");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("INTEGER");
@@ -71,6 +672,8 @@ namespace DataAccess.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AddressId");
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -79,32 +682,56 @@ namespace DataAccess.Migrations
                         .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ConcurrencyStamp")
-                        .IsConcurrencyToken()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(256)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("NormalizedName")
-                        .HasMaxLength(256)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("NormalizedName")
-                        .IsUnique()
-                        .HasDatabaseName("RoleNameIndex");
-
-                    b.ToTable("AspNetRoles", (string)null);
+                    b.HasData(
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1a",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "b7ee8cc9-db8a-4f6d-9269-f8afa593511e",
+                            Email = "admin@mail.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "ADMIN@MAIL.COM",
+                            NormalizedUserName = "ADMIN",
+                            PasswordHash = "AQAAAAIAAYagAAAAEFKrtJfNM0B1t5gdoK3qLIZl6n+mH8zZN5txEhlxZJW6X3O723IZPY4tgXTPOtcn8w==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "202f8669-0a6c-480c-8337-841372097dd8",
+                            TwoFactorEnabled = false,
+                            UserName = "admin"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1b",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "9a78e399-f2f1-4ebb-98af-b3128185f68c",
+                            Email = "shop@mail.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "SHOP@MAIL.COM",
+                            NormalizedUserName = "SHOP",
+                            PasswordHash = "AQAAAAIAAYagAAAAECKNMwMm2GX22Zzi04s4C7hXnScG87qUO8u6ec5G3hYTZNilFchTVvSQSBChdB99fw==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "42dfcda7-1dc7-4dca-8cb5-01a1b429bede",
+                            TwoFactorEnabled = false,
+                            UserName = "shop"
+                        },
+                        new
+                        {
+                            Id = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1c",
+                            AccessFailedCount = 0,
+                            ConcurrencyStamp = "459dd0cd-9970-45a7-9c52-24ffb60e3743",
+                            Email = "user@mail.com",
+                            EmailConfirmed = true,
+                            LockoutEnabled = false,
+                            NormalizedEmail = "USER@MAIL.COM",
+                            NormalizedUserName = "USER",
+                            PasswordHash = "AQAAAAIAAYagAAAAEDNokO3LLY31Crg3IRilTEafZqOX2KQtHZ0yq5MAbObZJKbG50BIthoSdQOqHRrleQ==",
+                            PhoneNumberConfirmed = false,
+                            SecurityStamp = "8503224b-aa97-4476-a180-a9976d50ba70",
+                            TwoFactorEnabled = false,
+                            UserName = "user"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -188,6 +815,18 @@ namespace DataAccess.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("AspNetUserRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            UserId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1a",
+                            RoleId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1b"
+                        },
+                        new
+                        {
+                            UserId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1b",
+                            RoleId = "f1b0b3f4-3b1b-4b7e-8f1d-3e0b6e1d6e1c"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
@@ -209,9 +848,180 @@ namespace DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("DataAccess.Entities.Cart", b =>
+                {
+                    b.HasOne("DataAccess.Entities.Users.User", "User")
+                        .WithOne("Cart")
+                        .HasForeignKey("DataAccess.Entities.Cart", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.CartItem", b =>
+                {
+                    b.HasOne("DataAccess.Entities.Cart", "Cart")
+                        .WithMany("CartItems")
+                        .HasForeignKey("CartId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Cart");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Order", b =>
+                {
+                    b.HasOne("DataAccess.Entities.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Entities.Users.User", "User")
+                        .WithMany("Orders")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.OrderDetail", b =>
+                {
+                    b.HasOne("DataAccess.Entities.Order", "Order")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Entities.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Product", b =>
+                {
+                    b.HasOne("DataAccess.Entities.Shop", null)
+                        .WithMany("Products")
+                        .HasForeignKey("ShopId");
+
+                    b.HasOne("DataAccess.Entities.Subcategory", "Subcategory")
+                        .WithMany("Products")
+                        .HasForeignKey("SubcategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Subcategory");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.ProductTag", b =>
+                {
+                    b.HasOne("DataAccess.Entities.Product", "Product")
+                        .WithMany("ProductsTags")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Entities.Tag", "Tag")
+                        .WithMany("ProductTags")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Entities.TagValue", "TagValue")
+                        .WithMany("ProductTags")
+                        .HasForeignKey("TagValueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Tag");
+
+                    b.Navigation("TagValue");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Shop", b =>
+                {
+                    b.HasOne("DataAccess.Entities.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("DataAccess.Entities.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Address");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Subcategory", b =>
+                {
+                    b.HasOne("DataAccess.Entities.Category", "Category")
+                        .WithMany("Subcategories")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Tag", b =>
+                {
+                    b.HasOne("DataAccess.Entities.Subcategory", "Subcategory")
+                        .WithMany("Tags")
+                        .HasForeignKey("SubcategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Subcategory");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.TagValue", b =>
+                {
+                    b.HasOne("DataAccess.Entities.Tag", "Tag")
+                        .WithMany("TagValues")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tag");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Users.User", b =>
+                {
+                    b.HasOne("DataAccess.Entities.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId");
+
+                    b.Navigation("Address");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("DataAccess.Entities.Users.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -220,7 +1030,7 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("DataAccess.Entities.User", null)
+                    b.HasOne("DataAccess.Entities.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -229,7 +1039,7 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("DataAccess.Entities.User", null)
+                    b.HasOne("DataAccess.Entities.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -238,13 +1048,13 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
+                    b.HasOne("DataAccess.Entities.Users.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DataAccess.Entities.User", null)
+                    b.HasOne("DataAccess.Entities.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -253,11 +1063,62 @@ namespace DataAccess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("DataAccess.Entities.User", null)
+                    b.HasOne("DataAccess.Entities.Users.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Cart", b =>
+                {
+                    b.Navigation("CartItems");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Category", b =>
+                {
+                    b.Navigation("Subcategories");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Order", b =>
+                {
+                    b.Navigation("OrderDetails");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Product", b =>
+                {
+                    b.Navigation("ProductsTags");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Shop", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Subcategory", b =>
+                {
+                    b.Navigation("Products");
+
+                    b.Navigation("Tags");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Tag", b =>
+                {
+                    b.Navigation("ProductTags");
+
+                    b.Navigation("TagValues");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.TagValue", b =>
+                {
+                    b.Navigation("ProductTags");
+                });
+
+            modelBuilder.Entity("DataAccess.Entities.Users.User", b =>
+                {
+                    b.Navigation("Cart");
+
+                    b.Navigation("Orders");
                 });
 #pragma warning restore 612, 618
         }

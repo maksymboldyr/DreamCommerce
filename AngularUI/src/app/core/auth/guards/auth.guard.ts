@@ -1,5 +1,5 @@
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from '../auth.service';
+import { AuthService } from '../services/auth.service';
 import { inject } from '@angular/core';
 import { catchError, map, of } from 'rxjs';
 
@@ -12,6 +12,14 @@ export const authGuard: CanActivateFn = (route, state) => {
       if (!isAuthenticated) {
         router.navigate(['/login']);
         return false;
+      }
+
+      let role = route.data['role'];
+
+      if (role && !auth.hasRole(role)) {
+        router.navigate(['/']);
+                
+        return false
       }
 
       return true;

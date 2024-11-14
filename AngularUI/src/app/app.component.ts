@@ -1,9 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterOutlet } from '@angular/router';
-import { Button } from 'primeng/button';
 import { HeaderComponent } from "./core/ui/header/header.component";
 
 
@@ -12,12 +9,15 @@ import { HeaderComponent } from "./core/ui/header/header.component";
   standalone: true,
   imports: [
     RouterOutlet,
-    CommonModule,
-    HeaderComponent
+    HeaderComponent,
+    CommonModule
 ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent {
   title = 'AngularUI';
+
+  constructor() {
+  }
 }
