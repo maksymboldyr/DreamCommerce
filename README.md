@@ -14,23 +14,29 @@ E-commerce single-page application built with ASP.NET WebAPI (.NET 8), Angular 1
 ## Installation
 
 Prerequisites:
+- [Visual Studio 2022](https://visualstudio.microsoft.com/downloads/)]
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 - [Node.js v20.15.1 or newer](https://nodejs.org/en/download/package-manager)
 
 1. Clone the repository
-2. Install ASP.NET dependencies  
+2. Open the solution in Visual Studio
+3. Install ASP.NET dependencies  
    Inside root solution directory, run:
 
    ```bash
    dotnet restore
    ```
-3. Run migrations  
+   ```bash
+   dotnet tool install --global dotnet-ef --version 8.*
+   ```
+
+4. Run migrations  
    Inside the root solution directory, run:
 
    ```bash
    dotnet ef database update --project DataAccess --startup-project API
    ```
-4. Install Angular dependencies  
+5. Install Angular dependencies  
    Inside the `AngularUI` directory, run:
 
    ```bash
