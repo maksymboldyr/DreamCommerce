@@ -61,15 +61,15 @@ public class ProductService(
     /// <summary>
     /// Gets products by given filter with pagination and sorting.
     /// </summary>
-    /// <param name="name">The filter string.</param>
+    /// <param name="filter">The filter string.</param>
     /// <param name="page">The page number.</param>
     /// <param name="pageSize">The page size.</param>
     /// <param name="sortField">The field to sort by.</param>
     /// <param name="sortOrder">The sort order (asc/desc).</param>
     /// <returns>Filtered, ordered, and paginated collection of <see cref="ProductDto"/> objects and the total count of filtered products before pagination.</returns>
-    public async Task<(IEnumerable<ProductDto>, int)> GetProductsWithCount(string name, int page, int pageSize, string sortField, string sortOrder)
+    public async Task<(IEnumerable<ProductDto>, int)> GetProductsWithCount(string filter, int page, int pageSize, string sortField, string sortOrder)
     {
-        var filterExpression = filterBuilderService.BuildFilter<Product>(name);
+        var filterExpression = filterBuilderService.BuildFilter<Product>(filter);
         var sortingExpression = productSortingService.GetSortExpression(sortField, sortOrder);
 
         var filteredProducts = await unitOfWork.ProductRepository.GetAsync(

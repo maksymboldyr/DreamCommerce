@@ -16,13 +16,13 @@ public interface IProductService
     /// <summary>
     /// Gets products by given filter with pagination and sorting
     /// </summary>
-    /// <param name="name"></param>
+    /// <param name="filter"></param>
     /// <param name="page"></param>
     /// <param name="pageSize"></param>
     /// <param name="sortField"></param>
     /// <param name="sortOrder"></param>
     /// <returns> Filtered, ordered and paginated collection of <see cref="ProductDto"/> objects and total count of products.</returns>
-    Task<(IEnumerable<ProductDto>, int)> GetProductsWithCount(string name, int page, int pageSize, string sortField, string sortOrder);
+    Task<(IEnumerable<ProductDto>, int)> GetProductsWithCount(string filter, int page, int pageSize, string sortField, string sortOrder);
 
     /// <summary>
     /// Gets product by id
