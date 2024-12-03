@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 
@@ -171,6 +172,21 @@ public class UserService(
     public async Task<bool> UpdateUserAsync(UserDto userDto)
     {
         var user = userDto.Adapt<User>();
+
+        var existingRoles = await GetUserRolesByIdAsync(userDto.Id);
+        var rolesToRemove = existingRoles.Except(userDto.Roles);
+        var rolesToAdd = userDto.Roles.Except(existingRoles);
+
+        foreach (var role in rolesToRemove)
+        {
+            await RemoveRole(new EditUserRolesDto { UserId = userDto.Id, RoleName = role });
+        }
+
+        foreach (var role in rolesToAdd)
+        {
+            await SetUserRole(new EditUserRolesDto { UserId = userDto.Id, RoleName = role });
+        }
+
         return await userRepository.UpdateUserAsync(user);
     }
 
