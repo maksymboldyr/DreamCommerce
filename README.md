@@ -14,7 +14,7 @@ E-commerce single-page application built with ASP.NET WebAPI (.NET 8), Angular 1
 ## Installation
 
 Prerequisites:
-- [Visual Studio 2022](https://visualstudio.microsoft.com/downloads/)]
+- [Visual Studio 2022](https://visualstudio.microsoft.com/downloads/)
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
 - [Node.js v20.15.1 or newer](https://nodejs.org/en/download/package-manager)
 
