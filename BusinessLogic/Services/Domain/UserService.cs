@@ -20,7 +20,7 @@ namespace BusinessLogic.Services.Domain;
 public class UserService(
     IUserRepository userRepository,
     FilterBuilderService filterBuilder,
-    SortingService<User> sortingService,
+    SortingService<UserDto> sortingService,
     UserManager<User> userManager,
     IConfiguration configuration) : IUserService
 {
@@ -130,17 +130,19 @@ public class UserService(
         }
 
         var filteredDTOs = userDTOs
-            .Where(u => filterExpression.Compile().Invoke(u))
-            .OrderBy(u => sortExpression);
+            .Where(u => filterExpression.Compile().Invoke(u));
+
+        var sortedDtos = sortExpression(filteredDTOs.AsQueryable());
 
         var totalUsers = filteredDTOs.Count();
 
-        var pagedUserDTOs = filteredDTOs
+        var pagedUserDTOs = sortedDtos
             .Skip((page - 1) * pageSize)
             .Take(pageSize);
 
         return (pagedUserDTOs, totalUsers);
     }
+
 
     /// <summary>
     /// Gets user by id.

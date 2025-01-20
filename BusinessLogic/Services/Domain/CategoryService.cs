@@ -12,8 +12,8 @@ namespace BusinessLogic.Services.Domain;
 public class CategoryService(
     UnitOfWork unitOfWork,
     FilterBuilderService filterBuilderService,
-    SortingService<Category> categorySortingService,
-    SortingService<Subcategory> subcategorySortingService) : ICategoryService
+    SortingService<CategoryDto> categorySortingService,
+    SortingService<SubcategoryDto> subcategorySortingService) : ICategoryService
 {
     /// <summary>
     /// Creates a new category.
@@ -79,18 +79,20 @@ public class CategoryService(
     /// <returns>Filtered, ordered and paginated collection of <see cref="CategoryDto"/> objects and total count of filtered out categories, before pagination is applied.</returns>
     public async Task<(IEnumerable<CategoryDto>, int)> GetCategoriesWithCount(string filter, int page, int pageSize, string sortField, string sortOrder)
     {
-        var filterExpression = filterBuilderService.BuildFilter<Category>(filter);
+        var filterExpression = filterBuilderService.BuildFilter<CategoryDto>(filter);
         var sortingExpression = categorySortingService.GetSortExpression(sortField, sortOrder);
 
-        var filteredCategories = await unitOfWork.CategoryRepository.GetAsync(
-            filter: filterExpression,
-            orderBy: sortingExpression,
-            includeProperties: "Subcategories");
+        var categories = await unitOfWork.CategoryRepository.GetAsync(includeProperties: "Subcategories");
 
-        var result = filteredCategories
+        var filteredCategories = categories.Adapt<IEnumerable<CategoryDto>>()
+            .Where(u => filterExpression.Compile().Invoke(u))
+            .ToList();
+
+        var sortedCategories = sortingExpression(filteredCategories.AsQueryable());
+
+        var result = sortedCategories
             .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .Adapt<IEnumerable<CategoryDto>>();
+            .Take(pageSize);
 
         return (result, filteredCategories.Count());
     }
@@ -127,18 +129,20 @@ public class CategoryService(
     /// <returns>Filtered, ordered and paginated collection of <see cref="SubcategoryDto"/> objects and total count of filtered subcategories, before pagination is applied.</returns>
     public async Task<(IEnumerable<SubcategoryDto>, int)> GetSubcategoriesWithCount(string filter, int page, int pageSize, string sortField, string sortOrder)
     {
-        var filterExpression = filterBuilderService.BuildFilter<Subcategory>(filter);
+        var filterExpression = filterBuilderService.BuildFilter<SubcategoryDto>(filter);
         var sortingExpression = subcategorySortingService.GetSortExpression(sortField, sortOrder);
 
-        var filteredSubcategories = await unitOfWork.SubcategoryRepository.GetAsync(
-            filter: filterExpression,
-            orderBy: sortingExpression,
-            includeProperties: "Category");
+        var subcategories = await unitOfWork.SubcategoryRepository.GetAsync(includeProperties: "Category");
 
-        var result = filteredSubcategories
+        var filteredSubcategories = subcategories.Adapt<IEnumerable<SubcategoryDto>>()
+            .Where(u => filterExpression.Compile().Invoke(u))
+            .ToList();
+
+        var sortedSubcategories = sortingExpression(filteredSubcategories.AsQueryable());
+
+        var result = sortedSubcategories
             .Skip((page - 1) * pageSize)
-            .Take(pageSize)
-            .Adapt<IEnumerable<SubcategoryDto>>();
+            .Take(pageSize);
 
         return (result, filteredSubcategories.Count());
     }
