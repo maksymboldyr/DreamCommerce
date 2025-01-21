@@ -29,13 +29,23 @@ export class AdminPanelComponent {
       items: [
         {
           label: 'Categories',
-          icon: 'pi pi-fw pi-tag',
+          icon: 'pi pi-fw pi-bookmark',
           routerLink: 'categories'
         },
         {
           label: 'Subcategories',
-          icon: 'pi pi-fw pi-tags',
+          icon: 'pi pi-fw pi-bookmark-fill',
           routerLink: 'subcategories'
+        },
+        {
+          label: 'Tags',
+          icon: 'pi pi-fw pi-tag',
+          routerLink: 'tags'
+        },
+        {
+          label: 'Tag Values',
+          icon: 'pi pi-fw pi-tags',
+          routerLink: 'tag-values'
         },
         {
           label: 'Products',

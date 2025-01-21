@@ -1,0 +1,105 @@
+<p-toolbar styleClass="mb-4 gap-2">
+    <ng-template pTemplate="left">
+        <p-button 
+            severity="success" 
+            label="New" 
+            icon="pi pi-plus" 
+            class="mr-2"  
+            (click)="toggleFormDialog()"
+            />
+    </ng-template>
+</p-toolbar>
+<p-table
+    [tableStyle]="{'width': '80rem', 'min-height': '20rem'}"
+    [scrollable]="true" 
+    scrollHeight="45rem" 
+    [value]="tagValues"
+    [loading]="loading"
+    [lazy]="true"
+    [paginator]="true"
+    [rows]="5"
+    [totalRecords]="totalRecords"
+    [rowsPerPageOptions]="[5, 10, 20]"    
+    [paginatorPosition]="'bottom'"
+    [showCurrentPageReport]="true" currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+    [sortOrder]="1"
+    (onLazyLoad)="loadData($event)">
+    <ng-template pTemplate="header">
+        <tr>
+            <th class="w-4rem"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
+            <th pSortableColumn="Id">Id<p-sortIcon field="Id"></p-sortIcon></th>
+            <th pSortableColumn="Value">Value<p-sortIcon field="Value"></p-sortIcon></th>
+            <th pSortableColumn="TagName">Tag<p-sortIcon field="TagName"></p-sortIcon></th>
+            <th pSortableColumn="SubcategoryName">Subcategory<p-sortIcon field="SubcategoryName"></p-sortIcon></th>
+            <th>Actions</th>
+        </tr>
+        <tr>
+            <th></th>
+            <th>
+                <p-columnFilter type="text" field="Id" placeholder="Search by ID"></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter type="text" field="Value" placeholder="Search by Value"></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter type="text" field="TagName" placeholder="Search by Tag"></p-columnFilter>
+            </th>
+            <th>
+                <p-columnFilter type="text" field="SubcategoryName" placeholder="Search by Subcategory"></p-columnFilter>
+            </th>
+            <th></th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-tagValue>
+        <tr>
+            <td><p-tableCheckbox [value]="tagValue"></p-tableCheckbox></td>
+            <td>{{tagValue.id}}</td>
+            <td>{{tagValue.value}}</td>
+            <td>{{tagValue.tagName}}</td>
+            <td>{{tagValue.subcategoryName}}</td>
+            <td>
+                <p-button 
+                icon="pi pi-pencil" 
+                class="mr-2" 
+                [rounded]="true" 
+                [outlined]="true" 
+                severity="success" 
+                (click)="editTagValue(tagValue)"
+                ></p-button>
+                <p-button 
+                icon="pi pi-trash" 
+                severity="danger" 
+                [rounded]="true" 
+                [outlined]="true"
+                (click)="deleteTagValue(tagValue)"
+                ></p-button>
+            </td>
+        </tr>
+    </ng-template>        
+</p-table>
+
+<p-dialog header="Add Tag Value" [(visible)]="tagValueFormVisible" class="w-25rem" [modal]="true" [responsive]="true">
+    <form (ngSubmit)="addTagValue()">
+        <div class="flex flex-column">
+            <label for="value" class="font-semibold w-6rem my-1">Value</label>
+            <input id="value" name="tagValue" type="text" pInputText class="flex-auto" [(ngModel)]="tagValueField" required autofocus/>
+            <label for="tag" class="font-semibold w-6rem mt-5 my-1">Tag</label>
+            <p-dropdown id="tag" name="tag" placeholder="Select tag" 
+            [options]="tags" 
+            [(ngModel)]="tagDropdownSelect" 
+            optionLabel="name" 
+            styleClass="w-full" 
+            required
+            [filter]="true"
+            filterBy="name"
+            [virtualScroll]="true"
+            [virtualScrollItemSize]="38" 
+            appendTo="body"
+            ></p-dropdown>
+        </div>
+        <p-footer class="flex justify-content-end mt-3 gap-2">
+            <button type="button" pButton label="Cancel" icon="pi pi-times" severity="secondary" (click)="toggleFormDialog()"></button>
+            <button type="submit" pButton label="Save" icon="pi pi-check"></button>
+        </p-footer>
+    </form>
+</p-dialog>

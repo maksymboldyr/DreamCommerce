@@ -19,6 +19,8 @@ import { CheckoutConfirmComponent } from './core/cart/components/checkout-confir
 import { UserOrdersComponent } from './core/account/components/user-orders/user-orders.component';
 import { UserOrderDetailsComponent } from './core/account/components/user-order-details/user-order-details.component';
 import { OrdersComponent } from './core/admin/components/orders/orders.component';
+import { TagsComponent } from './core/admin/components/tags/tags.component';
+import { TagValuesComponent } from './core/admin/components/tag-values/tag-values.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -36,6 +38,8 @@ export const routes: Routes = [
             { path: 'subcategories', component: SubcategoriesComponent },
             { path: 'products', component: ProductsComponent },
             { path: 'orders', component: OrdersComponent },
+            { path: 'tags', component: TagsComponent },
+            { path: 'tag-values', component: TagValuesComponent }
         ],
     },
     { 
